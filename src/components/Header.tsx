@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, Package } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, Package, BarChart3 } from 'lucide-react';
 import Logo from './Logo';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Auth from './Auth';
 import OrderHistory from './OrderHistory';
+import AdminDashboard from './AdminDashboard';
 
 interface HeaderProps {
   activeSection: string;
@@ -15,8 +16,11 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const { getCartCount, toggleCart } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
+
+  const isAdmin = user?.role === 'admin';
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -63,6 +67,16 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                     {user?.name}
                   </span>
                 </div>
+                {isAdmin && (
+                  <button
+                    onClick={() => setShowAdminDashboard(true)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-md transition-colors duration-200 shadow-md"
+                    title="Admin Dashboard"
+                  >
+                    <BarChart3 size={18} />
+                    <span className="hidden lg:inline">Dashboard</span>
+                  </button>
+                )}
                 <button
                   onClick={() => setShowOrderHistory(true)}
                   className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200"
@@ -168,6 +182,18 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                         <p className="text-xs text-gray-500">{user?.email}</p>
                       </div>
                     </div>
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          setShowAdminDashboard(true);
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md"
+                      >
+                        <BarChart3 size={18} />
+                        <span className="font-medium">Admin Dashboard</span>
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         setShowOrderHistory(true);
@@ -214,6 +240,9 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
     
     {/* Order History Modal */}
     <OrderHistory isOpen={showOrderHistory} onClose={() => setShowOrderHistory(false)} />
+    
+    {/* Admin Dashboard Modal */}
+    <AdminDashboard isOpen={showAdminDashboard} onClose={() => setShowAdminDashboard(false)} />
     </>
   );
 };

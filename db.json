@@ -266,7 +266,7 @@
       ],
       "totalAmount": 500,
       "paymentMethod": "Cash on Delivery",
-      "status": "pending",
+      "status": "shipped",
       "shippingAddress": {
         "addressLine1": "123 Main Street",
         "addressLine2": "Near Central Park",
@@ -275,7 +275,7 @@
         "pincode": "500001"
       },
       "createdAt": "2025-10-11T00:00:00.000Z",
-      "updatedAt": "2025-10-11T00:00:00.000Z"
+      "updatedAt": "2025-10-11T18:28:37.479Z"
     },
     {
       "id": "c76e",
@@ -294,7 +294,7 @@
       ],
       "totalAmount": 600,
       "paymentMethod": "Cash on Delivery",
-      "status": "pending",
+      "status": "processing",
       "shippingAddress": {
         "addressLine1": "123 Main Street",
         "addressLine2": "Near Central Park",
@@ -303,7 +303,7 @@
         "pincode": "500001"
       },
       "createdAt": "2025-10-11T18:15:15.077Z",
-      "updatedAt": "2025-10-11T18:15:15.078Z"
+      "updatedAt": "2025-10-11T18:28:41.831Z"
     },
     {
       "id": "2170",
