@@ -1,89 +1,44 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { MessageCircle, Award, Leaf, Shield, Star } from 'lucide-react';
 import NoResults from './NoResults';
+
+const API_URL = 'http://localhost:3001';
 
 interface ProductsProps {
   searchTerm: string;
 }
 
+// Helper function to map icon names to components
+const getIcon = (iconName: string) => {
+  const icons: { [key: string]: React.ReactNode } = {
+    'Leaf': <Leaf className="w-3 h-3" />,
+    'Shield': <Shield className="w-3 h-3" />,
+    'Award': <Award className="w-3 h-3" />,
+    'Star': <Star className="w-3 h-3" />
+  };
+  return icons[iconName] || <Star className="w-3 h-3" />;
+};
+
 const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
-  const products = [
-    {
-      id: 1,
-      name: 'Plain Chilli Powder',
-      price: '250',
-      weight: '500gm',
-      description: 'Pure, aromatic chilli powder made from the finest red chillies. Perfect for adding heat and flavor to any dish.',
-      image: '/WhatsApp Image 2025-06-28 at 4.25.25 PM.jpeg',
-      searchKeywords: ['chilli', 'chili', 'red', 'hot', 'spicy', 'heat', 'powder'],
-      features: [
-        { text: '100% Natural', icon: <Leaf className="w-3 h-3" />, color: 'bg-green-100 text-green-800' },
-        { text: 'No Preservatives', icon: <Shield className="w-3 h-3" />, color: 'bg-blue-100 text-blue-800' },
-        { text: 'Premium Quality', icon: <Award className="w-3 h-3" />, color: 'bg-purple-100 text-purple-800' },
-        { text: 'Traditional Recipe', icon: <Star className="w-3 h-3" />, color: 'bg-amber-100 text-amber-800' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Curry Powder',
-      price: '200',
-      weight: '500gm',
-      description: 'A perfect blend of aromatic spices that brings authentic curry flavors to your kitchen. Versatile and full of taste.',
-      image: '/WhatsApp Image 2025-06-28 at 4.10.33 PM copy.jpeg',
-      searchKeywords: ['curry', 'blend', 'aromatic', 'spices', 'masala', 'powder'],
-      features: [
-        { text: 'Signature Blend', icon: <Star className="w-3 h-3" />, color: 'bg-amber-100 text-amber-800' },
-        { text: 'Aromatic Spices', icon: <Leaf className="w-3 h-3" />, color: 'bg-green-100 text-green-800' },
-        { text: 'Fresh Ground', icon: <Award className="w-3 h-3" />, color: 'bg-purple-100 text-purple-800' },
-        { text: 'Family Recipe', icon: <Star className="w-3 h-3" />, color: 'bg-red-100 text-red-800' }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Kobbari Karam',
-      price: '300',
-      weight: '500gm',
-      description: 'Traditional coconut-based spice mix with aromatic ingredients. A perfect accompaniment for rice, idli, and dosa with authentic South Indian flavors.',
-      image: '/WhatsApp Image 2025-06-28 at 5.39.30 PM.jpeg',
-      searchKeywords: ['kobbari', 'coconut', 'karam', 'south indian', 'rice', 'idli', 'dosa', 'traditional'],
-      features: [
-        { text: 'Coconut Base', icon: <Leaf className="w-3 h-3" />, color: 'bg-green-100 text-green-800' },
-        { text: 'Traditional Mix', icon: <Star className="w-3 h-3" />, color: 'bg-amber-100 text-amber-800' },
-        { text: 'Authentic Taste', icon: <Award className="w-3 h-3" />, color: 'bg-purple-100 text-purple-800' },
-        { text: 'South Indian', icon: <Shield className="w-3 h-3" />, color: 'bg-orange-100 text-orange-800' }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Nalla Karam',
-      price: '280',
-      weight: '500gm',
-      description: 'A rich and tangy spice blend made with premium tamarind, garlic, and aromatic spices. Perfect for enhancing rice dishes and traditional meals with its distinctive sour-spicy flavor.',
-      image: '/Nalla Karam.jpeg',
-      searchKeywords: ['nalla', 'karam', 'tamarind', 'garlic', 'tangy', 'sour', 'spicy', 'rice'],
-      features: [
-        { text: 'Tamarind Rich', icon: <Star className="w-3 h-3" />, color: 'bg-amber-100 text-amber-800' },
-        { text: 'Garlic Blend', icon: <Shield className="w-3 h-3" />, color: 'bg-red-100 text-red-800' },
-        { text: 'Traditional Mix', icon: <Award className="w-3 h-3" />, color: 'bg-purple-100 text-purple-800' },
-        { text: 'Aromatic Spices', icon: <Leaf className="w-3 h-3" />, color: 'bg-green-100 text-green-800' }
-      ]
-    },
-    {
-      id: 5,
-      name: 'Turmeric Root Powder',
-      price: '250',
-      weight: '500gm',
-      description: 'Premium quality turmeric powder made from fresh turmeric roots. Known for its vibrant color, earthy flavor, and health benefits.',
-      image: '/WhatsApp Image 2025-06-28 at 4.09.58 PM (1).jpeg',
-      searchKeywords: ['turmeric', 'haldi', 'yellow', 'root', 'health', 'curcumin', 'powder'],
-      features: [
-        { text: 'Fresh Ground', icon: <Award className="w-3 h-3" />, color: 'bg-purple-100 text-purple-800' },
-        { text: 'High Curcumin', icon: <Shield className="w-3 h-3" />, color: 'bg-blue-100 text-blue-800' },
-        { text: 'Vibrant Color', icon: <Star className="w-3 h-3" />, color: 'bg-yellow-100 text-yellow-800' },
-        { text: 'Health Benefits', icon: <Leaf className="w-3 h-3" />, color: 'bg-green-100 text-green-800' }
-      ]
-    }
-  ];
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${API_URL}/products`);
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Filter products based on search term
   const filteredProducts = useMemo(() => {
@@ -121,6 +76,19 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
   // Don't show this section if there's a search term (results are shown in Hero)
   if (searchTerm) {
     return null;
+  }
+
+  if (loading) {
+    return (
+      <section id="products" className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading products...</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -182,12 +150,12 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
                 <div className="mb-6">
                   <h4 className="font-semibold text-gray-900 mb-3">Key Features:</h4>
                   <div className="flex flex-wrap gap-2">
-                    {product.features.map((feature, index) => (
+                    {product.features.map((feature: any, index: number) => (
                       <div
                         key={index}
                         className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${feature.color} border border-opacity-20 hover:scale-105 transition-transform duration-200`}
                       >
-                        {feature.icon}
+                        {getIcon(feature.icon)}
                         <span>{feature.text}</span>
                       </div>
                     ))}
