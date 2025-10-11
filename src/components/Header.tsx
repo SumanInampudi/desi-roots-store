@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, Package } from 'lucide-react';
 import Logo from './Logo';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Auth from './Auth';
+import OrderHistory from './OrderHistory';
 
 interface HeaderProps {
   activeSection: string;
@@ -13,6 +14,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showOrderHistory, setShowOrderHistory] = useState(false);
   const { getCartCount, toggleCart } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -60,6 +62,14 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                     {user?.name}
                   </span>
                 </div>
+                <button
+                  onClick={() => setShowOrderHistory(true)}
+                  className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200"
+                  title="My Orders"
+                >
+                  <Package size={18} />
+                  <span className="hidden lg:inline">Orders</span>
+                </button>
                 <button
                   onClick={logout}
                   className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors duration-200"
@@ -159,6 +169,16 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                     </div>
                     <button
                       onClick={() => {
+                        setShowOrderHistory(true);
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200"
+                    >
+                      <Package size={18} />
+                      <span className="font-medium">My Orders</span>
+                    </button>
+                    <button
+                      onClick={() => {
                         logout();
                         setIsMenuOpen(false);
                       }}
@@ -188,6 +208,9 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
 
       {/* Auth Modal */}
       <Auth isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      
+      {/* Order History Modal */}
+      <OrderHistory isOpen={showOrderHistory} onClose={() => setShowOrderHistory(false)} />
     </header>
   );
 };
