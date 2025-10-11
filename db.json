@@ -42068,28 +42068,6 @@
   ],
   "reviews": [
     {
-      "id": "563c",
-      "productId": "1",
-      "productName": "Plain Chilli Powder",
-      "orderId": "202",
-      "userId": "1",
-      "customerName": "Admin User",
-      "rating": 5,
-      "comment": "Super tasty",
-      "createdAt": "2025-10-11T22:06:51.073Z"
-    },
-    {
-      "id": "3dcb",
-      "productId": "1760219064226",
-      "productName": "Chicken Pickle",
-      "orderId": "f54f",
-      "userId": "c016",
-      "customerName": "Suman Inampudi",
-      "rating": 5,
-      "comment": "\"The authentic taste of these spices reminds me of my grandmother's cooking. The Chicken Pickle is absolutely divine!\"",
-      "createdAt": "2025-10-11T22:22:28.044Z"
-    },
-    {
       "id": "9e1c",
       "productId": "3",
       "productName": "Kobbari Karam",
