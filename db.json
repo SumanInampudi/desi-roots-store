@@ -41881,6 +41881,37 @@
       "subtotal": 850,
       "shippingCharges": 43,
       "profit": 255
+    },
+    {
+      "id": "6dfb",
+      "userId": "guest-1760214535795",
+      "customerName": "Suman Inampudi",
+      "customerEmail": "sinampudi.suman@gmail.com",
+      "customerPhone": "12016651535",
+      "items": [
+        {
+          "productId": "3",
+          "productName": "Kobbari Karam",
+          "quantity": 1,
+          "price": "300",
+          "weight": "500gm"
+        }
+      ],
+      "subtotal": 300,
+      "shippingCharges": 50,
+      "totalAmount": 350,
+      "profit": 90,
+      "paymentMethod": "Cash on Delivery",
+      "status": "pending",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      },
+      "createdAt": "2025-10-11T20:29:12.669Z",
+      "updatedAt": "2025-10-11T20:29:12.669Z"
     }
   ],
   "reviews": [

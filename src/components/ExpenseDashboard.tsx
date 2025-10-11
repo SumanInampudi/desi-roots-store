@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, DollarSign, TrendingUp, Calendar, Tag, Search, Filter, Edit2, Trash2, Eye, BarChart3 } from 'lucide-react';
+import { X, Plus, DollarSign, TrendingUp, Calendar, Tag, Search, Filter, Edit2, Trash2, Eye, BarChart3, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ExpenseForm from './ExpenseForm';
 import API_URL from '../config/api';
@@ -80,6 +80,8 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ isOpen, onClose }) 
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [showCharts, setShowCharts] = useState(false);
+  const [sortColumn, setSortColumn] = useState<'title' | 'amount' | 'category' | 'date' | 'vendor'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const [stats, setStats] = useState<Stats>({
     totalExpenses: 0,
@@ -100,7 +102,7 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ isOpen, onClose }) 
 
   useEffect(() => {
     filterExpenses();
-  }, [searchTerm, categoryFilter, dateFilter, expenses]);
+  }, [searchTerm, categoryFilter, dateFilter, expenses, sortColumn, sortDirection]);
 
   const fetchExpenses = async () => {
     try {
@@ -204,7 +206,62 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ isOpen, onClose }) 
       });
     }
 
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortColumn) {
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'amount':
+          aValue = a.amount;
+          bValue = b.amount;
+          break;
+        case 'category':
+          aValue = a.category.toLowerCase();
+          bValue = b.category.toLowerCase();
+          break;
+        case 'date':
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
+          break;
+        case 'vendor':
+          aValue = a.vendor.toLowerCase();
+          bValue = b.vendor.toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
     setFilteredExpenses(filtered);
+  };
+
+  const handleSort = (column: 'title' | 'amount' | 'category' | 'date' | 'vendor') => {
+    if (sortColumn === column) {
+      // Toggle direction if same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new column with desc as default
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortColumn !== column) {
+      return <ArrowUpDown className="w-3 h-3 opacity-50" />;
+    }
+    return sortDirection === 'asc' ? 
+      <ArrowUp className="w-3 h-3" /> : 
+      <ArrowDown className="w-3 h-3" />;
   };
 
   const handleDeleteExpense = async (id: string) => {
@@ -545,11 +602,46 @@ const ExpenseDashboard: React.FC<ExpenseDashboardProps> = ({ isOpen, onClose }) 
                       <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                           <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vendor</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                            <th 
+                              className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 transition-colors"
+                              onClick={() => handleSort('date')}
+                            >
+                              <div className="flex items-center gap-1">
+                                Date {getSortIcon('date')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 transition-colors"
+                              onClick={() => handleSort('title')}
+                            >
+                              <div className="flex items-center gap-1">
+                                Title {getSortIcon('title')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 transition-colors"
+                              onClick={() => handleSort('category')}
+                            >
+                              <div className="flex items-center gap-1">
+                                Category {getSortIcon('category')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 transition-colors"
+                              onClick={() => handleSort('vendor')}
+                            >
+                              <div className="flex items-center gap-1">
+                                Vendor {getSortIcon('vendor')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 transition-colors"
+                              onClick={() => handleSort('amount')}
+                            >
+                              <div className="flex items-center gap-1">
+                                Amount {getSortIcon('amount')}
+                              </div>
+                            </th>
                             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                           </tr>
                         </thead>

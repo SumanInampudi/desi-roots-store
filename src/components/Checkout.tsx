@@ -41,8 +41,14 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
 
   // Load saved shipping address when component mounts
   useEffect(() => {
-    if (isOpen && user && !user.isGuest) {
-      loadSavedAddress();
+    if (isOpen && user) {
+      if (user.isGuest) {
+        // For guest users, just set loading to false immediately
+        setLoadingAddress(false);
+      } else {
+        // For registered users, load saved address
+        loadSavedAddress();
+      }
     }
   }, [isOpen, user]);
 
@@ -184,7 +190,7 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
       };
 
       // Save order to backend
-      const orderResponse = await fetch('${API_URL}/orders', {
+      const orderResponse = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
