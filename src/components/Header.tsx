@@ -50,10 +50,13 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    {user?.name.charAt(0).toUpperCase()}
+                  <div className="relative">
+                    <div className="w-9 h-9 bg-gradient-to-br from-red-500 via-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md ring-2 ring-white">
+                      {user?.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                   </div>
-                  <span className="text-sm font-medium text-gray-700 hidden lg:block">
+                  <span className="text-sm font-semibold text-gray-700 hidden lg:block">
                     {user?.name}
                   </span>
                 </div>
@@ -143,11 +146,14 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                 {isAuthenticated ? (
                   <div className="space-y-2">
                     <div className="flex items-center px-3 py-2 bg-gray-50 rounded-md">
-                      <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
-                        {user?.name.charAt(0).toUpperCase()}
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 via-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md ring-2 ring-white">
+                          {user?.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                        <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
                         <p className="text-xs text-gray-500">{user?.email}</p>
                       </div>
                     </div>
