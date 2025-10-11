@@ -1,9 +1,11 @@
-import React from 'react';
-import { X, Plus, Minus, ShoppingBag, Trash2, MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Plus, Minus, ShoppingBag, Trash2, MessageCircle, CreditCard } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import Checkout from './Checkout';
 
 const Cart: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, getCartTotal, getCartCount, isCartOpen, toggleCart } = useCart();
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const handleCheckout = () => {
     const items = cart.map(item => 
@@ -153,13 +155,22 @@ const Cart: React.FC = () => {
               <span className="text-2xl font-bold text-gray-900">₹{getCartTotal()}</span>
             </div>
 
-            {/* Checkout Button */}
+            {/* Proceed to Checkout Button */}
+            <button
+              onClick={() => setShowCheckout(true)}
+              className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <CreditCard className="w-5 h-5" />
+              <span>Proceed to Checkout</span>
+            </button>
+
+            {/* WhatsApp Checkout (Alternative) */}
             <button
               onClick={handleCheckout}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="w-full mt-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
             >
-              <MessageCircle className="w-5 h-5 animate-pulse" />
-              <span>Checkout via WhatsApp</span>
+              <MessageCircle className="w-4 h-4" />
+              <span>Or Order via WhatsApp</span>
             </button>
 
             {/* Continue Shopping */}
@@ -172,6 +183,9 @@ const Cart: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Checkout Modal */}
+      <Checkout isOpen={showCheckout} onClose={() => setShowCheckout(false)} />
     </>
   );
 };
