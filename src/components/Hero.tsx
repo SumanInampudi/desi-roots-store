@@ -225,6 +225,17 @@ const Hero: React.FC<HeroProps> = ({
               </div>
             ) : (
               <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+                {/* Close Button at Top */}
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={() => onSearchChange('')}
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all duration-200 font-semibold text-sm border border-red-200 hover:border-red-300 group"
+                  >
+                    <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
+                    <span>Close Search</span>
+                  </button>
+                </div>
+
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     Search Results
@@ -360,16 +371,27 @@ const Hero: React.FC<HeroProps> = ({
                   onClose={() => setShowToast(false)}
                 />
                 
-                <div className="text-center mt-6 pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold text-sm hover:underline transition-all duration-200 group"
-                  >
-                    <span>View all products below</span>
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                  </button>
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button
+                      onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold text-sm hover:underline transition-all duration-200 group"
+                    >
+                      <span>View all products below</span>
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                      </svg>
+                    </button>
+                    
+                    {/* Close Button at Bottom */}
+                    <button
+                      onClick={() => onSearchChange('')}
+                      className="flex items-center space-x-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all duration-200 font-semibold text-sm border border-red-200 hover:border-red-300 group"
+                    >
+                      <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
+                      <span>Close Search</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
