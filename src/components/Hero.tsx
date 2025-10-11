@@ -5,6 +5,7 @@ import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
 import Auth from './Auth';
 import ProductDetailModal from './ProductDetailModal';
+import Toast from './Toast';
 
 interface HeroProps {
   searchTerm: string;
@@ -25,6 +26,8 @@ const Hero: React.FC<HeroProps> = ({
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
   const [quantities, setQuantities] = React.useState<{ [key: number]: number }>({});
+  const [showToast, setShowToast] = React.useState(false);
+  const [toastMessage, setToastMessage] = React.useState('');
   const { addToCart } = useCart();
 
   const getQuantity = (productId: number) => quantities[productId] || 1;
@@ -45,9 +48,22 @@ const Hero: React.FC<HeroProps> = ({
 
   const handleAddToCart = (product: any) => {
     const quantity = getQuantity(product.id);
+    
+    // Check if already authenticated
+    const savedUser = localStorage.getItem('desiRootsUser');
+    if (!savedUser) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     for (let i = 0; i < quantity; i++) {
       addToCart(product, () => setShowAuthModal(true));
     }
+    
+    // Show success toast
+    setToastMessage(`${quantity}x ${product.name} added to cart!`);
+    setShowToast(true);
+    
     // Reset quantity after adding
     setQuantities(prev => ({ ...prev, [product.id]: 1 }));
   };
@@ -331,6 +347,17 @@ const Hero: React.FC<HeroProps> = ({
                   product={selectedProduct}
                   isOpen={!!selectedProduct}
                   onClose={() => setSelectedProduct(null)}
+                  onAddToCart={(message: string) => {
+                    setToastMessage(message);
+                    setShowToast(true);
+                  }}
+                />
+                
+                {/* Success Toast */}
+                <Toast
+                  message={toastMessage}
+                  isVisible={showToast}
+                  onClose={() => setShowToast(false)}
                 />
                 
                 <div className="text-center mt-6 pt-4 border-t border-gray-200">

@@ -4,6 +4,7 @@ import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
 import Auth from './Auth';
 import ProductDetailModal from './ProductDetailModal';
+import Toast from './Toast';
 
 const API_URL = 'http://localhost:3001';
 
@@ -28,6 +29,8 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const { addToCart } = useCart();
 
   const getQuantity = (productId: number) => quantities[productId] || 1;
@@ -48,9 +51,22 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
 
   const handleAddToCart = (product: any) => {
     const quantity = getQuantity(product.id);
+    
+    // Check if already authenticated
+    const savedUser = localStorage.getItem('desiRootsUser');
+    if (!savedUser) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     for (let i = 0; i < quantity; i++) {
       addToCart(product, () => setShowAuthModal(true));
     }
+    
+    // Show success toast
+    setToastMessage(`${quantity}x ${product.name} added to cart!`);
+    setShowToast(true);
+    
     // Reset quantity after adding
     setQuantities(prev => ({ ...prev, [product.id]: 1 }));
   };
@@ -86,12 +102,12 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
       if (product.description.toLowerCase().includes(searchLower)) return true;
       
       // Search in keywords
-      if (product.searchKeywords.some(keyword => 
+      if (product.searchKeywords.some((keyword: string) => 
         keyword.toLowerCase().includes(searchLower)
       )) return true;
       
       // Search in features
-      if (product.features.some(feature => 
+      if (product.features.some((feature: any) => 
         feature.text.toLowerCase().includes(searchLower)
       )) return true;
       
@@ -246,6 +262,17 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
         product={selectedProduct}
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
+        onAddToCart={(message: string) => {
+          setToastMessage(message);
+          setShowToast(true);
+        }}
+      />
+      
+      {/* Success Toast */}
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
       />
     </section>
   );

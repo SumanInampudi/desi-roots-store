@@ -7,6 +7,7 @@ interface ProductDetailModalProps {
   product: any;
   isOpen: boolean;
   onClose: () => void;
+  onAddToCart?: (message: string) => void;
 }
 
 // Helper function to map icon names to components
@@ -20,7 +21,7 @@ const getIcon = (iconName: string) => {
   return icons[iconName] || <Star className="w-4 h-4" />;
 };
 
-const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen, onClose }) => {
+const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen, onClose, onAddToCart: onAddToCartCallback }) => {
   const [quantity, setQuantity] = useState(1);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { addToCart } = useCart();
@@ -28,9 +29,24 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
   if (!isOpen || !product) return null;
 
   const handleAddToCart = () => {
+    // Check if already authenticated
+    const savedUser = localStorage.getItem('desiRootsUser');
+    if (!savedUser) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     for (let i = 0; i < quantity; i++) {
       addToCart(product, () => setShowAuthModal(true));
     }
+    
+    // Trigger success callback
+    if (onAddToCartCallback) {
+      onAddToCartCallback(`${quantity}x ${product.name} added to cart!`);
+    }
+    
+    // Close modal and reset quantity
+    onClose();
     setQuantity(1);
   };
 
