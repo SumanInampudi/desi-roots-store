@@ -156,12 +156,13 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] transition-opacity duration-300"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Order History Modal */}
-      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-4xl">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 transform transition-all duration-300 max-h-[90vh] flex flex-col">
           {/* Header */}
           <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
@@ -328,6 +329,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
     </>

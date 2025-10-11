@@ -217,12 +217,12 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] transition-opacity duration-300"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Checkout Modal */}
-      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 overflow-y-auto">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 transform transition-all duration-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-t-2xl flex items-center justify-between">
