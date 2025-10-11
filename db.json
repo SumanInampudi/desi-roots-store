@@ -1,13 +1,21 @@
 {
   "products": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Plain Chilli Powder",
       "price": "250",
       "weight": "500gm",
       "description": "Pure, aromatic chilli powder made from the finest red chillies. Perfect for adding heat and flavor to any dish.",
       "image": "/WhatsApp Image 2025-06-28 at 4.25.25 PM.jpeg",
-      "searchKeywords": ["chilli", "chili", "red", "hot", "spicy", "heat", "powder"],
+      "searchKeywords": [
+        "chilli",
+        "chili",
+        "red",
+        "hot",
+        "spicy",
+        "heat",
+        "powder"
+      ],
       "features": [
         {
           "text": "100% Natural",
@@ -35,13 +43,20 @@
       "createdAt": "2025-10-11T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Curry Powder",
       "price": "200",
       "weight": "500gm",
       "description": "A perfect blend of aromatic spices that brings authentic curry flavors to your kitchen. Versatile and full of taste.",
       "image": "/WhatsApp Image 2025-06-28 at 4.10.33 PM copy.jpeg",
-      "searchKeywords": ["curry", "blend", "aromatic", "spices", "masala", "powder"],
+      "searchKeywords": [
+        "curry",
+        "blend",
+        "aromatic",
+        "spices",
+        "masala",
+        "powder"
+      ],
       "features": [
         {
           "text": "Signature Blend",
@@ -69,13 +84,22 @@
       "createdAt": "2025-10-11T00:00:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Kobbari Karam",
       "price": "300",
       "weight": "500gm",
       "description": "Traditional coconut-based spice mix with aromatic ingredients. A perfect accompaniment for rice, idli, and dosa with authentic South Indian flavors.",
       "image": "/WhatsApp Image 2025-06-28 at 5.39.30 PM.jpeg",
-      "searchKeywords": ["kobbari", "coconut", "karam", "south indian", "rice", "idli", "dosa", "traditional"],
+      "searchKeywords": [
+        "kobbari",
+        "coconut",
+        "karam",
+        "south indian",
+        "rice",
+        "idli",
+        "dosa",
+        "traditional"
+      ],
       "features": [
         {
           "text": "Coconut Base",
@@ -103,13 +127,22 @@
       "createdAt": "2025-10-11T00:00:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Nalla Karam",
       "price": "280",
       "weight": "500gm",
       "description": "A rich and tangy spice blend made with premium tamarind, garlic, and aromatic spices. Perfect for enhancing rice dishes and traditional meals with its distinctive sour-spicy flavor.",
       "image": "/Nalla Karam.jpeg",
-      "searchKeywords": ["nalla", "karam", "tamarind", "garlic", "tangy", "sour", "spicy", "rice"],
+      "searchKeywords": [
+        "nalla",
+        "karam",
+        "tamarind",
+        "garlic",
+        "tangy",
+        "sour",
+        "spicy",
+        "rice"
+      ],
       "features": [
         {
           "text": "Tamarind Rich",
@@ -137,13 +170,21 @@
       "createdAt": "2025-10-11T00:00:00.000Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Turmeric Root Powder",
       "price": "250",
       "weight": "500gm",
       "description": "Premium quality turmeric powder made from fresh turmeric roots. Known for its vibrant color, earthy flavor, and health benefits.",
       "image": "/WhatsApp Image 2025-06-28 at 4.09.58 PM (1).jpeg",
-      "searchKeywords": ["turmeric", "haldi", "yellow", "root", "health", "curcumin", "powder"],
+      "searchKeywords": [
+        "turmeric",
+        "haldi",
+        "yellow",
+        "root",
+        "health",
+        "curcumin",
+        "powder"
+      ],
       "features": [
         {
           "text": "Fresh Ground",
@@ -173,7 +214,7 @@
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Admin User",
       "email": "admin@desiroots.store",
       "password": "admin123",
@@ -182,7 +223,7 @@
       "createdAt": "2025-10-11T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Demo Customer",
       "email": "customer@example.com",
       "password": "customer123",
@@ -195,11 +236,20 @@
         "pincode": "500001"
       },
       "createdAt": "2025-10-11T00:00:00.000Z"
+    },
+    {
+      "id": "c016",
+      "name": "Suman Inampudi",
+      "email": "sinampudi.suman@gmail.com",
+      "password": "Eshwar@23",
+      "role": "customer",
+      "phone": "2016651535",
+      "createdAt": "2025-10-11T17:27:55.594Z"
     }
   ],
   "orders": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 2,
       "customerName": "Demo Customer",
       "customerEmail": "customer@example.com",
@@ -226,7 +276,7 @@
   ],
   "reviews": [
     {
-      "id": 1,
+      "id": "1",
       "productId": 1,
       "userId": 2,
       "userName": "Demo Customer",
@@ -237,4 +287,3 @@
   ],
   "cart": []
 }
-

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Truck, Leaf, Award, Clock, MessageCircle, Star, Shield, X, Gift, ShoppingCart } from 'lucide-react';
+import { Truck, Leaf, Award, Clock, MessageCircle, Star, Shield, X, Gift, ShoppingCart, Eye, Plus, Minus } from 'lucide-react';
 import SearchBar from './SearchBar';
 import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
 import Auth from './Auth';
+import ProductDetailModal from './ProductDetailModal';
 
 interface HeroProps {
   searchTerm: string;
@@ -22,7 +23,34 @@ const Hero: React.FC<HeroProps> = ({
 }) => {
   const [showAnnouncement, setShowAnnouncement] = React.useState(true);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
+  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
+  const [quantities, setQuantities] = React.useState<{ [key: number]: number }>({});
   const { addToCart } = useCart();
+
+  const getQuantity = (productId: number) => quantities[productId] || 1;
+  
+  const increaseQuantity = (productId: number) => {
+    setQuantities(prev => ({
+      ...prev,
+      [productId]: (prev[productId] || 1) + 1
+    }));
+  };
+
+  const decreaseQuantity = (productId: number) => {
+    setQuantities(prev => ({
+      ...prev,
+      [productId]: Math.max(1, (prev[productId] || 1) - 1)
+    }));
+  };
+
+  const handleAddToCart = (product: any) => {
+    const quantity = getQuantity(product.id);
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product, () => setShowAuthModal(true));
+    }
+    // Reset quantity after adding
+    setQuantities(prev => ({ ...prev, [product.id]: 1 }));
+  };
 
   const features = [
     {
@@ -193,70 +221,101 @@ const Hero: React.FC<HeroProps> = ({
                   </div>
                 </div>
                 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative border border-gray-100"
+                      className="bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative"
                     >
-                      {/* Elegant Price Tag */}
-                      <div className="absolute top-3 right-3 z-10">
-                        <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white px-3 py-2 rounded-lg shadow-lg transform rotate-3 group-hover:rotate-0 transition-transform duration-300">
-                          <div className="text-center">
-                            <div className="text-xs font-semibold opacity-90">₹{product.price}</div>
-                            <div className="text-xs opacity-80">{product.weight}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="aspect-w-16 aspect-h-12 overflow-hidden">
+                      {/* Product Image */}
+                      <div className="relative aspect-square overflow-hidden bg-gray-100">
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        {/* Eye Icon - View Details */}
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4 text-gray-700" />
+                        </button>
+
+                        {/* Price Badge */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                          <div className="flex items-center justify-between text-white">
+                            <div>
+                              <div className="text-lg font-bold">₹{product.price}</div>
+                              <div className="text-xs opacity-90">{product.weight}</div>
+                            </div>
+                            <div className="flex items-center">
+                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs ml-1">5.0</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="p-4">
-                        <h4 className="text-lg font-bold text-gray-900 mb-2 pr-8 group-hover:text-red-700 transition-colors duration-300">
+                      {/* Product Info */}
+                      <div className="p-3">
+                        <h3 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 min-h-[2.5rem]">
                           {product.name}
-                        </h4>
+                        </h3>
                         
-                        <p className="text-gray-600 mb-3 text-sm leading-relaxed line-clamp-2">
-                          {product.description}
-                        </p>
-                        
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-1">
-                            {product.features.slice(0, 2).map((feature, index) => (
-                              <div
-                                key={index}
-                                className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200 hover:scale-105 transition-transform duration-200"
-                              >
-                                <Leaf className="w-3 h-3" />
-                                <span>{feature.text}</span>
-                              </div>
-                            ))}
+                        {/* Features - Show 2 */}
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {product.features.slice(0, 2).map((feature: any, index: number) => (
+                            <div
+                              key={index}
+                              className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-200"
+                            >
+                              <Leaf className="w-3 h-3" />
+                              <span className="text-xs">{feature.text}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Quantity Selector */}
+                        <div className="mb-3">
+                          <div className="flex items-center justify-between bg-gray-50 rounded-lg p-1">
+                            <button
+                              onClick={() => decreaseQuantity(product.id)}
+                              className="p-1 hover:bg-white rounded transition-colors duration-200"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="w-3 h-3 text-gray-600" />
+                            </button>
+                            <span className="text-sm font-semibold text-gray-900 px-2">
+                              {getQuantity(product.id)}
+                            </span>
+                            <button
+                              onClick={() => increaseQuantity(product.id)}
+                              className="p-1 hover:bg-white rounded transition-colors duration-200"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="w-3 h-3 text-gray-600" />
+                            </button>
                           </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-2">
+                        {/* Action Buttons */}
+                        <div className="flex flex-col gap-2">
                           <button
-                            onClick={() => {
-                              addToCart(product, () => setShowAuthModal(true));
-                            }}
-                            className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
+                            onClick={() => handleAddToCart(product)}
+                            className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md hover:shadow-lg transform hover:scale-105"
                           >
-                            <ShoppingCart size={16} className="group-hover:scale-110 transition-transform duration-200" />
+                            <ShoppingCart size={14} />
                             <span>Add to Cart</span>
                           </button>
                           <button
                             onClick={() => handleWhatsAppOrder(product.name)}
-                            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg"
+                            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md"
                           >
-                            <MessageCircle size={16} className="animate-pulse" />
-                            <span>WhatsApp</span>
+                            <MessageCircle size={14} />
+                            <span>Order Now</span>
                           </button>
                         </div>
                       </div>
@@ -266,6 +325,13 @@ const Hero: React.FC<HeroProps> = ({
 
                 {/* Auth Modal */}
                 <Auth isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+                
+                {/* Product Detail Modal */}
+                <ProductDetailModal
+                  product={selectedProduct}
+                  isOpen={!!selectedProduct}
+                  onClose={() => setSelectedProduct(null)}
+                />
                 
                 <div className="text-center mt-6 pt-4 border-t border-gray-200">
                   <button
