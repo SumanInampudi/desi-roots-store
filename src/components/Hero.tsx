@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, Leaf, Award, Clock, MessageCircle, Star, Shield, X, Gift, ShoppingCart, Eye, Plus, Minus } from 'lucide-react';
+import { Truck, Leaf, Award, Clock, Star, X, ShoppingCart, Plus, Minus } from 'lucide-react';
 import SearchBar from './SearchBar';
 import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
@@ -29,6 +29,20 @@ const Hero: React.FC<HeroProps> = ({
   const [showToast, setShowToast] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
   const { addToCart } = useCart();
+
+  // Close search results on ESC key
+  React.useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && searchTerm) {
+        onSearchChange('');
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [searchTerm, onSearchChange]);
 
   const getQuantity = (productId: number) => quantities[productId] || 1;
   
@@ -94,12 +108,6 @@ const Hero: React.FC<HeroProps> = ({
       color: 'bg-orange-500'
     }
   ];
-
-  const handleWhatsAppOrder = (productName: string) => {
-    const message = `Hi! I'd like to order ${productName}. Could you please provide me with more details about pricing and availability?`;
-    const whatsappUrl = `https://wa.me/918179715455?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   return (
     <section id="home" className="relative pt-16 overflow-hidden">
@@ -248,116 +256,72 @@ const Hero: React.FC<HeroProps> = ({
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {/* List View */}
+                <div className="space-y-3">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative"
+                      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-3 flex items-center gap-4 border border-gray-100 hover:border-orange-200"
                     >
-                      {/* Product Image */}
-                      <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      {/* Product Image - Smaller */}
+                      <div 
+                        className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 cursor-pointer group"
+                        onClick={() => setSelectedProduct(product)}
+                      >
                         <img
                           src={product.image}
                           alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
-                        
-                        {/* Quick Actions Overlay */}
-                        <div className="absolute top-2 right-2 flex flex-col gap-2">
-                          {/* Eye Icon - View Details */}
-                          <button
-                            onClick={() => setSelectedProduct(product)}
-                            className="p-2 bg-white/95 hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 backdrop-blur-sm"
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4 text-gray-700" />
-                          </button>
-                          
-                          {/* Quick Add Button */}
-                          <button
-                            onClick={() => {
-                              const savedUser = localStorage.getItem('desiRootsUser');
-                              if (!savedUser) {
-                                setShowAuthModal(true);
-                                return;
-                              }
-                              addToCart(product, () => setShowAuthModal(true));
-                              setToastMessage(`${product.name} added to cart!`);
-                              setShowToast(true);
-                            }}
-                            className="p-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 backdrop-blur-sm group/quick"
-                            title="Quick Add (1 item)"
-                          >
-                            <Plus className="w-4 h-4 text-white group-hover/quick:rotate-90 transition-transform duration-200" />
-                          </button>
-                        </div>
+                      </div>
 
-                        {/* Price Badge */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                          <div className="flex items-center justify-between text-white">
-                            <div>
-                              <div className="text-lg font-bold">₹{product.price}</div>
-                              <div className="text-xs opacity-90">{product.weight}</div>
-                            </div>
-                            <div className="flex items-center">
-                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs ml-1">5.0</span>
-                            </div>
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0">
+                        <h4 
+                          className="font-semibold text-gray-900 text-sm truncate cursor-pointer hover:text-orange-600 transition-colors"
+                          onClick={() => setSelectedProduct(product)}
+                        >
+                          {product.name}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-orange-600 font-bold text-sm">₹{product.price}</span>
+                          <span className="text-gray-500 text-xs">• {product.weight}</span>
+                          <div className="flex items-center">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-xs text-gray-600 ml-0.5">5.0</span>
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Product Info */}
-                      <div className="p-3">
-                        <h3 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 min-h-[2.5rem]">
-                          {product.name}
-                        </h3>
-                        
-                        {/* Features - Show 2 */}
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {product.features.slice(0, 2).map((feature: any, index: number) => (
-                            <div
-                              key={index}
-                              className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 border border-green-200"
-                            >
-                              <Leaf className="w-3 h-3" />
-                              <span className="text-xs">{feature.text}</span>
-                            </div>
-                          ))}
-                        </div>
 
-                        {/* Quantity Selector */}
-                        <div className="mb-3">
-                          <div className="flex items-center justify-between bg-gray-50 rounded-lg p-1">
-                            <button
-                              onClick={() => decreaseQuantity(product.id)}
-                              className="p-1 hover:bg-white rounded transition-colors duration-200"
-                              aria-label="Decrease quantity"
-                            >
-                              <Minus className="w-3 h-3 text-gray-600" />
-                            </button>
-                            <span className="text-sm font-semibold text-gray-900 px-2">
-                              {getQuantity(product.id)}
-                            </span>
-                            <button
-                              onClick={() => increaseQuantity(product.id)}
-                              className="p-1 hover:bg-white rounded transition-colors duration-200"
-                              aria-label="Increase quantity"
-                            >
-                              <Plus className="w-3 h-3 text-gray-600" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Add to Cart Button */}
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1">
                         <button
-                          onClick={() => handleAddToCart(product)}
-                          className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-95"
+                          onClick={() => decreaseQuantity(product.id)}
+                          className="p-1 hover:bg-white rounded transition-colors duration-200"
+                          aria-label="Decrease quantity"
                         >
-                          <ShoppingCart size={16} />
-                          <span>Add {getQuantity(product.id) > 1 ? `(${getQuantity(product.id)})` : ''}</span>
+                          <Minus className="w-4 h-4 text-gray-600" />
+                        </button>
+                        <span className="text-sm font-semibold text-gray-900 w-6 text-center">
+                          {getQuantity(product.id)}
+                        </span>
+                        <button
+                          onClick={() => increaseQuantity(product.id)}
+                          className="p-1 hover:bg-white rounded transition-colors duration-200"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-4 h-4 text-gray-600" />
                         </button>
                       </div>
+
+                      {/* Add to Cart Icon Button */}
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="flex-shrink-0 p-2.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
+                        title={`Add ${getQuantity(product.id)} to cart`}
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                      </button>
                     </div>
                   ))}
                 </div>
