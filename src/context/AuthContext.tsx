@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import API_URL from '../config/api';
 
 interface User {
-  id: number;
+  id: number | string;
   name: string;
   email: string;
   role: string;
   phone?: string;
   createdAt: string;
+  isGuest?: boolean;
 }
 
 interface AuthContextType {
@@ -14,6 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   register: (name: string, email: string, password: string, phone: string) => Promise<{ success: boolean; message: string }>;
+  continueAsGuest: () => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -27,8 +30,6 @@ export const useAuth = () => {
   }
   return context;
 };
-
-const API_URL = 'http://localhost:3001';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -133,6 +134,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('desiRootsUser');
   };
 
+  const continueAsGuest = () => {
+    const guestUser: User = {
+      id: 'guest-' + Date.now(),
+      name: 'Guest User',
+      email: 'guest@desiproots.com',
+      role: 'guest',
+      phone: '',
+      createdAt: new Date().toISOString(),
+      isGuest: true
+    };
+    setUser(guestUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -140,6 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         login,
         register,
+        continueAsGuest,
         logout,
         isLoading,
       }}

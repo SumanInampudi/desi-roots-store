@@ -20,7 +20,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, continueAsGuest } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +66,14 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
     setIsLogin(!isLogin);
     setError('');
     setFormData({ name: '', email: '', password: '', phone: '' });
+  };
+
+  const handleGuestCheckout = () => {
+    continueAsGuest();
+    if (onSuccess) {
+      onSuccess();
+    }
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -224,6 +232,26 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                   'Create Account'
                 )}
               </button>
+
+              {/* Guest Checkout Option */}
+              <div className="mt-3">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-2 bg-white text-gray-500">or</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleGuestCheckout}
+                  className="w-full mt-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2 text-sm"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>Continue as Guest</span>
+                </button>
+              </div>
             </form>
 
             {/* Switch Mode */}

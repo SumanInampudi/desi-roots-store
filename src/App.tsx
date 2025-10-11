@@ -10,8 +10,7 @@ import CustomerSupport from './components/CustomerSupport';
 import Cart from './components/Cart';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
-
-const API_URL = 'http://localhost:3001';
+import API_URL from './config/api';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -80,12 +79,12 @@ function App() {
       if (product.description.toLowerCase().includes(searchLower)) return true;
       
       // Search in keywords
-      if (product.searchKeywords.some(keyword => 
+      if (product.searchKeywords.some((keyword: string) => 
         keyword.toLowerCase().includes(searchLower)
       )) return true;
       
       // Search in features
-      if (product.features.some(feature => 
+      if (product.features.some((feature: any) => 
         feature.text.toLowerCase().includes(searchLower)
       )) return true;
       

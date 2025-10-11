@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Package, Clock, CheckCircle, XCircle, Truck, RefreshCw, ChevronDown, ChevronUp, MapPin, Calendar, CreditCard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import API_URL from '../config/api';
 
 interface OrderHistoryProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/orders?userId=${user?.id}&_sort=createdAt&_order=desc`);
+      const response = await fetch(`${API_URL}/orders?userId=${user?.id}&_sort=createdAt&_order=desc`);
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -84,7 +85,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
     // Fetch full product details and add to cart
     try {
       for (const item of order.items) {
-        const productResponse = await fetch(`http://localhost:3001/products/${item.productId}`);
+        const productResponse = await fetch(`${API_URL}/products/${item.productId}`);
         if (productResponse.ok) {
           const product = await productResponse.json();
           // Add each item the specified number of times

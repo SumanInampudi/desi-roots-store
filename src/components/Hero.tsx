@@ -1,8 +1,9 @@
 import React from 'react';
-import { Truck, Leaf, Award, Clock, Star, X, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Truck, Leaf, Award, Clock, Star, X, ShoppingCart, Plus, Minus, MessageCircle } from 'lucide-react';
 import SearchBar from './SearchBar';
 import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import Auth from './Auth';
 import ProductDetailModal from './ProductDetailModal';
 import Toast from './Toast';
@@ -29,6 +30,7 @@ const Hero: React.FC<HeroProps> = ({
   const [showToast, setShowToast] = React.useState(false);
   const [toastMessage, setToastMessage] = React.useState('');
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   // Close search results on ESC key
   React.useEffect(() => {
@@ -63,9 +65,8 @@ const Hero: React.FC<HeroProps> = ({
   const handleAddToCart = (product: any) => {
     const quantity = getQuantity(product.id);
     
-    // Check if already authenticated
-    const savedUser = localStorage.getItem('desiRootsUser');
-    if (!savedUser) {
+    // Check if already authenticated (including guest users)
+    if (!isAuthenticated) {
       setShowAuthModal(true);
       return;
     }
@@ -80,6 +81,13 @@ const Hero: React.FC<HeroProps> = ({
     
     // Reset quantity after adding
     setQuantities(prev => ({ ...prev, [product.id]: 1 }));
+  };
+
+  const handleWhatsAppOrder = (product: any) => {
+    const quantity = getQuantity(product.id);
+    const message = `Hi! I would like to order:\n\n${product.name}\nQuantity: ${quantity}\nPrice: ₹${product.price} per ${product.weight}\n\nPlease let me know the availability and total cost.`;
+    const whatsappUrl = `https://wa.me/919493359494?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const features = [
@@ -321,6 +329,15 @@ const Hero: React.FC<HeroProps> = ({
                         title={`Add ${getQuantity(product.id)} to cart`}
                       >
                         <ShoppingCart className="w-5 h-5" />
+                      </button>
+
+                      {/* WhatsApp Order Icon Button */}
+                      <button
+                        onClick={() => handleWhatsAppOrder(product)}
+                        className="flex-shrink-0 p-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
+                        title="Order on WhatsApp"
+                      >
+                        <MessageCircle className="w-5 h-5" />
                       </button>
                     </div>
                   ))}

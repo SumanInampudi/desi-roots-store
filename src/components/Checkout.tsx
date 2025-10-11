@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, MapPin, User, Phone, Mail, Home, Building2, CheckCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import API_URL from '../config/api';
 
 interface CheckoutProps {
   isOpen: boolean;
@@ -40,15 +41,18 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
 
   // Load saved shipping address when component mounts
   useEffect(() => {
-    if (isOpen && user) {
+    if (isOpen && user && !user.isGuest) {
       loadSavedAddress();
     }
   }, [isOpen, user]);
 
   const loadSavedAddress = async () => {
+    // Skip for guest users
+    if (user?.isGuest) return;
+    
     try {
       setLoadingAddress(true);
-      const response = await fetch(`http://localhost:3001/users/${user?.id}`);
+      const response = await fetch(`${API_URL}/users/${user?.id}`);
       if (response.ok) {
         const userData = await response.json();
         if (userData.shippingAddress) {
@@ -86,6 +90,21 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
       [name]: value
     }));
   };
+
+  // Calculate shipping charges
+  const calculateShipping = (subtotal: number) => {
+    if (subtotal >= 1000) {
+      return 0; // Free shipping
+    } else if (subtotal >= 500) {
+      return Math.round(subtotal * 0.05); // 5% of subtotal
+    } else {
+      return 50; // Flat ₹50
+    }
+  };
+
+  const subtotal = getCartTotal();
+  const shippingCharges = calculateShipping(subtotal);
+  const totalAmount = subtotal + shippingCharges;
 
   const validateForm = () => {
     if (!shippingAddress.fullName.trim()) {
@@ -130,6 +149,11 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
       setLoading(true);
 
       // Create order object
+      const orderSubtotal = getCartTotal();
+      const orderShipping = calculateShipping(orderSubtotal);
+      const orderTotal = orderSubtotal + orderShipping;
+      const orderProfit = Math.round(orderSubtotal * 0.30); // 30% profit margin on product cost
+      
       const order = {
         userId: user?.id,
         customerName: shippingAddress.fullName,
@@ -142,7 +166,10 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
           price: item.price,
           weight: item.weight
         })),
-        totalAmount: getCartTotal(),
+        subtotal: orderSubtotal,
+        shippingCharges: orderShipping,
+        totalAmount: orderTotal,
+        profit: orderProfit,
         paymentMethod: 'Cash on Delivery',
         status: 'pending',
         shippingAddress: {
@@ -157,7 +184,7 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
       };
 
       // Save order to backend
-      const orderResponse = await fetch('http://localhost:3001/orders', {
+      const orderResponse = await fetch('${API_URL}/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,28 +196,30 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
         throw new Error('Failed to place order');
       }
 
-      // Update user's shipping address
-      const userResponse = await fetch(`http://localhost:3001/users/${user?.id}`);
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        const updatedUser = {
-          ...userData,
-          shippingAddress: {
-            addressLine1: shippingAddress.addressLine1,
-            addressLine2: shippingAddress.addressLine2,
-            city: shippingAddress.city,
-            state: shippingAddress.state,
-            pincode: shippingAddress.pincode
-          }
-        };
+      // Update user's shipping address (skip for guest users)
+      if (!user?.isGuest) {
+        const userResponse = await fetch(`${API_URL}/users/${user?.id}`);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const updatedUser = {
+            ...userData,
+            shippingAddress: {
+              addressLine1: shippingAddress.addressLine1,
+              addressLine2: shippingAddress.addressLine2,
+              city: shippingAddress.city,
+              state: shippingAddress.state,
+              pincode: shippingAddress.pincode
+            }
+          };
 
-        await fetch(`http://localhost:3001/users/${user?.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedUser)
-        });
+          await fetch(`${API_URL}/users/${user?.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedUser)
+          });
+        }
       }
 
       // Show success state
@@ -406,9 +435,35 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
                             </span>
                           </div>
                         ))}
-                        <div className="border-t border-gray-300 pt-2 mt-2 flex justify-between">
-                          <span className="font-bold text-gray-900">Total Amount:</span>
-                          <span className="font-bold text-orange-600 text-lg">₹{getCartTotal()}</span>
+                        
+                        <div className="border-t border-gray-300 pt-2 mt-2 space-y-1">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Subtotal:</span>
+                            <span className="font-semibold text-gray-900">₹{subtotal}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Shipping Charges:</span>
+                            <span className="font-semibold text-gray-900">
+                              {shippingCharges === 0 ? (
+                                <span className="text-green-600">FREE</span>
+                              ) : (
+                                `₹${shippingCharges}`
+                              )}
+                            </span>
+                          </div>
+                          {subtotal < 1000 && (
+                            <p className="text-xs text-gray-500 italic">
+                              {subtotal < 500 
+                                ? `Add ₹${500 - subtotal} more for 5% shipping (instead of ₹50)`
+                                : `Add ₹${1000 - subtotal} more for FREE shipping!`
+                              }
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="border-t-2 border-gray-400 pt-2 mt-2 flex justify-between">
+                          <span className="font-bold text-gray-900 text-base">Total Amount:</span>
+                          <span className="font-bold text-orange-600 text-lg">₹{totalAmount}</span>
                         </div>
                         <div className="flex items-center justify-center text-sm text-green-600 font-medium pt-2">
                           <CheckCircle className="w-4 h-4 mr-2" />
@@ -436,7 +491,7 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
                     ) : (
                       <>
                         <CheckCircle className="w-5 h-5" />
-                        <span>Place Order (₹{getCartTotal()})</span>
+                        <span>Place Order (₹{totalAmount})</span>
                       </>
                     )}
                   </button>

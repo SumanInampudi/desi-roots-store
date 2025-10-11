@@ -2,11 +2,11 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { MessageCircle, Award, Leaf, Shield, Star, ShoppingCart, Eye, Plus, Minus } from 'lucide-react';
 import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import Auth from './Auth';
 import ProductDetailModal from './ProductDetailModal';
 import Toast from './Toast';
-
-const API_URL = 'http://localhost:3001';
+import API_URL from '../config/api';
 
 interface ProductsProps {
   searchTerm: string;
@@ -32,6 +32,7 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const getQuantity = (productId: number) => quantities[productId] || 1;
   
@@ -52,9 +53,8 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
   const handleAddToCart = (product: any) => {
     const quantity = getQuantity(product.id);
     
-    // Check if already authenticated
-    const savedUser = localStorage.getItem('desiRootsUser');
-    if (!savedUser) {
+    // Check if already authenticated (including guest users)
+    if (!isAuthenticated) {
       setShowAuthModal(true);
       return;
     }
@@ -208,9 +208,10 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
                   ))}
                 </div>
 
-                {/* Quantity Selector */}
-                <div className="mb-3">
-                  <div className="flex items-center justify-between bg-gray-50 rounded-lg p-1">
+                {/* Quantity Selector with Action Icons */}
+                <div className="flex items-center gap-2">
+                  {/* Quantity Controls */}
+                  <div className="flex items-center justify-between bg-gray-50 rounded-lg p-1 flex-1">
                     <button
                       onClick={() => decreaseQuantity(product.id)}
                       className="p-1 hover:bg-white rounded transition-colors duration-200"
@@ -229,23 +230,23 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
                       <Plus className="w-3 h-3 text-gray-600" />
                     </button>
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-2">
+                  
+                  {/* Action Icons */}
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md hover:shadow-lg transform hover:scale-105"
+                    className="p-2.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                    title="Add to Cart"
+                    aria-label="Add to Cart"
                   >
-                    <ShoppingCart size={14} />
-                    <span>Add to Cart</span>
+                    <ShoppingCart size={16} />
                   </button>
                   <button
                     onClick={() => handleWhatsAppOrder(product.name)}
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md"
+                    className="p-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                    title="Order on WhatsApp"
+                    aria-label="Order on WhatsApp"
                   >
-                    <MessageCircle size={14} />
-                    <span>Order Now</span>
+                    <MessageCircle size={16} />
                   </button>
                 </div>
               </div>
