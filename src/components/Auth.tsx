@@ -79,23 +79,23 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
       ></div>
 
       {/* Auth Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div
-          className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
+          className="bg-white rounded-2xl shadow-2xl max-w-md w-full my-8 transform transition-all duration-300 scale-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-red-600 to-orange-600 text-white p-8 rounded-t-2xl">
+          <div className="relative bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-t-2xl">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors duration-200"
+              className="absolute top-3 right-3 p-2 hover:bg-white/20 rounded-full transition-colors duration-200"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center justify-center mb-3">
               <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-                <ShoppingBag className="w-8 h-8" />
+                <ShoppingBag className="w-7 h-7" />
               </div>
             </div>
 
@@ -110,8 +110,8 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
           </div>
 
           {/* Form */}
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Error Message */}
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
@@ -122,7 +122,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
               {/* Name Field (Register only) */}
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Full Name
                   </label>
                   <div className="relative">
@@ -133,7 +133,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                       value={formData.name}
                       onChange={handleChange}
                       required={!isLogin}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -142,7 +142,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
 
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Email Address
                 </label>
                 <div className="relative">
@@ -153,7 +153,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -162,7 +162,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
               {/* Phone Field (Register only) */}
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Phone Number
                   </label>
                   <div className="relative">
@@ -173,7 +173,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                       value={formData.phone}
                       onChange={handleChange}
                       required={!isLogin}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
                       placeholder="+91 1234567890"
                     />
                   </div>
@@ -182,7 +182,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
 
               {/* Password Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
@@ -193,7 +193,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
+                    className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all duration-200"
                     placeholder="Enter your password"
                   />
                   <button
@@ -215,7 +215,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -232,12 +232,12 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Features (Register only) */}
             {!isLogin && (
-              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start space-x-3 text-sm text-green-800">
                   <Leaf className="w-5 h-5 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium mb-1">Join the Desi Roots Family!</p>
-                    <ul className="space-y-1 text-xs">
+                    <ul className="space-y-0.5 text-xs">
                       <li>✓ Easy cart management</li>
                       <li>✓ Order tracking</li>
                       <li>✓ Exclusive offers</li>
@@ -249,7 +249,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
             )}
 
             {/* Switch Mode */}
-            <div className="mt-6 text-center">
+            <div className="mt-4 text-center">
               <p className="text-gray-600 text-sm">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
                 <button
@@ -263,11 +263,13 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
             </div>
 
             {/* Demo Credentials (for testing) */}
-            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="text-xs text-gray-600 font-medium mb-2">Demo Login:</p>
-              <p className="text-xs text-gray-500">Email: customer@example.com</p>
-              <p className="text-xs text-gray-500">Password: customer123</p>
-            </div>
+            {isLogin && (
+              <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-xs text-gray-600 font-medium mb-1.5">Demo Login:</p>
+                <p className="text-xs text-gray-500">Email: customer@example.com</p>
+                <p className="text-xs text-gray-500">Password: customer123</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
