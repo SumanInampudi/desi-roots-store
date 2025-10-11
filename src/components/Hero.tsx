@@ -262,14 +262,35 @@ const Hero: React.FC<HeroProps> = ({
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                         
-                        {/* Eye Icon - View Details */}
-                        <button
-                          onClick={() => setSelectedProduct(product)}
-                          className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4 text-gray-700" />
-                        </button>
+                        {/* Quick Actions Overlay */}
+                        <div className="absolute top-2 right-2 flex flex-col gap-2">
+                          {/* Eye Icon - View Details */}
+                          <button
+                            onClick={() => setSelectedProduct(product)}
+                            className="p-2 bg-white/95 hover:bg-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 backdrop-blur-sm"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4 text-gray-700" />
+                          </button>
+                          
+                          {/* Quick Add Button */}
+                          <button
+                            onClick={() => {
+                              const savedUser = localStorage.getItem('desiRootsUser');
+                              if (!savedUser) {
+                                setShowAuthModal(true);
+                                return;
+                              }
+                              addToCart(product, () => setShowAuthModal(true));
+                              setToastMessage(`${product.name} added to cart!`);
+                              setShowToast(true);
+                            }}
+                            className="p-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 backdrop-blur-sm group/quick"
+                            title="Quick Add (1 item)"
+                          >
+                            <Plus className="w-4 h-4 text-white group-hover/quick:rotate-90 transition-transform duration-200" />
+                          </button>
+                        </div>
 
                         {/* Price Badge */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
@@ -328,23 +349,14 @@ const Hero: React.FC<HeroProps> = ({
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2">
-                          <button
-                            onClick={() => handleAddToCart(product)}
-                            className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md hover:shadow-lg transform hover:scale-105"
-                          >
-                            <ShoppingCart size={14} />
-                            <span>Add to Cart</span>
-                          </button>
-                          <button
-                            onClick={() => handleWhatsAppOrder(product.name)}
-                            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-1 text-xs shadow-md"
-                          >
-                            <MessageCircle size={14} />
-                            <span>Order Now</span>
-                          </button>
-                        </div>
+                        {/* Add to Cart Button */}
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-95"
+                        >
+                          <ShoppingCart size={16} />
+                          <span>Add {getQuantity(product.id) > 1 ? `(${getQuantity(product.id)})` : ''}</span>
+                        </button>
                       </div>
                     </div>
                   ))}
