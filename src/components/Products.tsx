@@ -1,6 +1,8 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { MessageCircle, Award, Leaf, Shield, Star } from 'lucide-react';
+import { MessageCircle, Award, Leaf, Shield, Star, ShoppingCart } from 'lucide-react';
 import NoResults from './NoResults';
+import { useCart } from '../context/CartContext';
+import Auth from './Auth';
 
 const API_URL = 'http://localhost:3001';
 
@@ -22,6 +24,8 @@ const getIcon = (iconName: string) => {
 const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { addToCart } = useCart();
 
   // Fetch products from API
   useEffect(() => {
@@ -162,18 +166,32 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleWhatsAppOrder(product.name)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 group"
-                >
-                  <MessageCircle size={20} className="group-hover:animate-pulse" />
-                  <span>Order on WhatsApp</span>
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => {
+                      addToCart(product, () => setShowAuthModal(true));
+                    }}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 group shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <ShoppingCart size={20} className="group-hover:scale-110 transition-transform duration-200" />
+                    <span>Add to Cart</span>
+                  </button>
+                  <button
+                    onClick={() => handleWhatsAppOrder(product.name)}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 group shadow-lg"
+                  >
+                    <MessageCircle size={20} className="group-hover:animate-pulse" />
+                    <span>WhatsApp</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <Auth isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </section>
   );
 };

@@ -7,6 +7,9 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import CustomerSupport from './components/CustomerSupport';
+import Cart from './components/Cart';
+import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 
 const API_URL = 'http://localhost:3001';
 
@@ -92,32 +95,41 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading products...</p>
-        </div>
-      </div>
+      <AuthProvider>
+        <CartProvider>
+          <div className="min-h-screen bg-white flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
+              <p className="text-gray-600 text-lg">Loading products...</p>
+            </div>
+          </div>
+        </CartProvider>
+      </AuthProvider>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header activeSection={activeSection} onNavClick={handleNavClick} />
-      <Hero 
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        resultsCount={filteredProducts.length}
-        totalCount={products.length}
-        filteredProducts={filteredProducts}
-      />
-      <Products searchTerm={searchTerm} />
-      <Testimonials />
-      <About />
-      <Contact />
-      <Footer />
-      <CustomerSupport />
-    </div>
+    <AuthProvider>
+      <CartProvider>
+        <div className="min-h-screen bg-white">
+          <Header activeSection={activeSection} onNavClick={handleNavClick} />
+          <Hero 
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            resultsCount={filteredProducts.length}
+            totalCount={products.length}
+            filteredProducts={filteredProducts}
+          />
+          <Products searchTerm={searchTerm} />
+          <Testimonials />
+          <About />
+          <Contact />
+          <Footer />
+          <CustomerSupport />
+          <Cart />
+        </div>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

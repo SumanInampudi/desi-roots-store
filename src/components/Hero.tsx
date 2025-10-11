@@ -1,7 +1,9 @@
 import React from 'react';
-import { Truck, Leaf, Award, Clock, MessageCircle, Star, Shield, X, Gift } from 'lucide-react';
+import { Truck, Leaf, Award, Clock, MessageCircle, Star, Shield, X, Gift, ShoppingCart } from 'lucide-react';
 import SearchBar from './SearchBar';
 import NoResults from './NoResults';
+import { useCart } from '../context/CartContext';
+import Auth from './Auth';
 
 interface HeroProps {
   searchTerm: string;
@@ -19,6 +21,8 @@ const Hero: React.FC<HeroProps> = ({
   filteredProducts 
 }) => {
   const [showAnnouncement, setShowAnnouncement] = React.useState(true);
+  const [showAuthModal, setShowAuthModal] = React.useState(false);
+  const { addToCart } = useCart();
 
   const features = [
     {
@@ -237,17 +241,31 @@ const Hero: React.FC<HeroProps> = ({
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => handleWhatsAppOrder(product.name)}
-                          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
-                        >
-                          <MessageCircle size={16} className="animate-pulse" />
-                          <span>Order Now</span>
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <button
+                            onClick={() => {
+                              addToCart(product, () => setShowAuthModal(true));
+                            }}
+                            className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
+                          >
+                            <ShoppingCart size={16} className="group-hover:scale-110 transition-transform duration-200" />
+                            <span>Add to Cart</span>
+                          </button>
+                          <button
+                            onClick={() => handleWhatsAppOrder(product.name)}
+                            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg"
+                          >
+                            <MessageCircle size={16} className="animate-pulse" />
+                            <span>WhatsApp</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Auth Modal */}
+                <Auth isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
                 
                 <div className="text-center mt-6 pt-4 border-t border-gray-200">
                   <button
