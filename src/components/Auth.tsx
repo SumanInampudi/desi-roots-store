@@ -79,11 +79,12 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
       ></div>
 
       {/* Auth Modal Container */}
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
-        <div
-          className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[85vh] overflow-y-auto transform transition-all duration-300 scale-100 pointer-events-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
+      <div className="fixed inset-0 z-[60] overflow-y-auto pointer-events-none">
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full my-8 transform transition-all duration-300 scale-100 pointer-events-auto relative"
+            onClick={(e) => e.stopPropagation()}
+          >
           {/* Header */}
           <div className="relative bg-gradient-to-r from-red-600 to-orange-600 text-white p-4 rounded-t-2xl">
             <button
@@ -245,6 +246,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
                 <p className="text-xs text-gray-500">customer@example.com / customer123</p>
               </div>
             )}
+          </div>
           </div>
         </div>
       </div>
