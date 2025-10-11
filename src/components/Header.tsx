@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                 {isAdmin && (
                   <button
                     onClick={() => setShowAdminDashboard(true)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-md transition-colors duration-200 shadow-md"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-md transition-colors duration-200 shadow-md"
                     title="Admin Dashboard"
                   >
                     <BarChart3 size={18} />
@@ -188,7 +188,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                           setShowAdminDashboard(true);
                           setIsMenuOpen(false);
                         }}
-                        className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md"
+                        className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md"
                       >
                         <BarChart3 size={18} />
                         <span className="font-medium">Admin Dashboard</span>

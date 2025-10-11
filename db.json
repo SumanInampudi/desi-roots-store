@@ -220,7 +220,14 @@
       "password": "admin123",
       "role": "admin",
       "phone": "+918179715455",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      }
     },
     {
       "id": "2",
@@ -332,6 +339,34 @@
       },
       "createdAt": "2025-10-11T18:23:29.788Z",
       "updatedAt": "2025-10-11T18:23:29.788Z"
+    },
+    {
+      "id": "9935",
+      "userId": "1",
+      "customerName": "Admin User",
+      "customerEmail": "admin@desiroots.store",
+      "customerPhone": "+918179715455",
+      "items": [
+        {
+          "productId": "3",
+          "productName": "Kobbari Karam",
+          "quantity": 1,
+          "price": "300",
+          "weight": "500gm"
+        }
+      ],
+      "totalAmount": 300,
+      "paymentMethod": "Cash on Delivery",
+      "status": "pending",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      },
+      "createdAt": "2025-10-11T18:31:54.947Z",
+      "updatedAt": "2025-10-11T18:31:54.947Z"
     }
   ],
   "reviews": [

@@ -266,7 +266,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
         <div className="pointer-events-auto w-full max-w-7xl">
           <div className="bg-white rounded-2xl shadow-2xl w-full my-8 transform transition-all duration-300 max-h-[95vh] flex flex-col">
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
+            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
               <div>
                 <h2 className="text-3xl font-bold mb-1">Admin Dashboard</h2>
                 <p className="text-white/90 text-sm">Manage orders and view analytics</p>
@@ -283,7 +283,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
             <div className="flex-1 overflow-y-auto p-6">
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mb-4"></div>
                   <p className="text-gray-600">Loading dashboard data...</p>
                 </div>
               ) : (
@@ -302,7 +302,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Total Orders */}
-                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+                    <div className="bg-gradient-to-br from-red-500 to-orange-600 rounded-xl p-6 text-white shadow-lg">
                       <div className="flex items-center justify-between mb-2">
                         <Package className="w-8 h-8 opacity-80" />
                       </div>
@@ -312,7 +312,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Pending Orders */}
-                    <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl p-6 text-white shadow-lg">
+                    <div className="bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl p-6 text-white shadow-lg">
                       <div className="flex items-center justify-between mb-2">
                         <Clock className="w-8 h-8 opacity-80" />
                       </div>
@@ -322,7 +322,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Delivered Orders */}
-                    <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-lg">
+                    <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-white shadow-lg">
                       <div className="flex items-center justify-between mb-2">
                         <CheckCircle className="w-8 h-8 opacity-80" />
                       </div>
@@ -340,15 +340,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       <p className="text-gray-600 text-sm mb-1">Today's Orders</p>
-                      <p className="text-2xl font-bold text-blue-600">{stats.todayOrders}</p>
+                      <p className="text-2xl font-bold text-red-600">{stats.todayOrders}</p>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       <p className="text-gray-600 text-sm mb-1">Processing</p>
-                      <p className="text-2xl font-bold text-indigo-600">{stats.processingOrders}</p>
+                      <p className="text-2xl font-bold text-orange-600">{stats.processingOrders}</p>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       <p className="text-gray-600 text-sm mb-1">Shipped</p>
-                      <p className="text-2xl font-bold text-purple-600">{stats.shippedOrders}</p>
+                      <p className="text-2xl font-bold text-amber-600">{stats.shippedOrders}</p>
                     </div>
                   </div>
 
@@ -363,7 +363,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                           placeholder="Search by order ID, customer name, email, or phone..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         />
                       </div>
 
@@ -373,7 +373,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                         <select
                           value={statusFilter}
                           onChange={(e) => setStatusFilter(e.target.value)}
-                          className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none cursor-pointer bg-white"
+                          className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none cursor-pointer bg-white"
                         >
                           <option value="all">All Status</option>
                           <option value="pending">Pending</option>
@@ -442,7 +442,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                                     setSelectedOrder(order);
                                     setShowOrderDetail(true);
                                   }}
-                                  className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                                  className="text-orange-600 hover:text-red-700 transition-colors"
                                   title="View Details"
                                 >
                                   <Eye className="w-5 h-5" />
@@ -476,7 +476,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
             <div className="pointer-events-auto w-full max-w-3xl">
               <div className="bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl flex items-center justify-between sticky top-0">
+                <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 rounded-t-2xl flex items-center justify-between sticky top-0">
                   <div>
                     <h3 className="text-2xl font-bold">Order Details</h3>
                     <p className="text-white/90 text-sm">#{selectedOrder.id}</p>
@@ -547,7 +547,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                   </div>
 
                   {/* Order Summary */}
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                  <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Payment Method:</span>
@@ -561,9 +561,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                         <span className="text-gray-600">Last Updated:</span>
                         <span className="font-medium text-gray-900">{formatDate(selectedOrder.updatedAt)}</span>
                       </div>
-                      <div className="border-t border-purple-300 pt-2 mt-2 flex justify-between items-center">
+                      <div className="border-t border-orange-300 pt-2 mt-2 flex justify-between items-center">
                         <span className="font-bold text-gray-900">Total Amount:</span>
-                        <span className="text-2xl font-bold text-purple-600">{formatCurrency(selectedOrder.totalAmount)}</span>
+                        <span className="text-2xl font-bold text-orange-600">{formatCurrency(selectedOrder.totalAmount)}</span>
                       </div>
                     </div>
                   </div>
