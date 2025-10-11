@@ -71,20 +71,19 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
-        onClick={onClose}
-      ></div>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-4">
+        {/* Overlay */}
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        ></div>
 
-      {/* Auth Modal Container */}
-      <div className="fixed inset-0 z-[60] overflow-y-auto pointer-events-none">
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full my-8 transform transition-all duration-300 scale-100 pointer-events-auto relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+        {/* Modal */}
+        <div
+          className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full z-10"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="relative bg-gradient-to-r from-red-600 to-orange-600 text-white p-4 rounded-t-2xl">
             <button
@@ -248,9 +247,8 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
             )}
           </div>
         </div>
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 
