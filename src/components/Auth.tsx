@@ -247,7 +247,7 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, onSuccess }) => {
               </div>
             )}
           </div>
-          </div>
+        </div>
         </div>
       </div>
     </>
