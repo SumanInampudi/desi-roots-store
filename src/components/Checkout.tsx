@@ -202,6 +202,37 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
         throw new Error('Failed to place order');
       }
 
+      // Update product stock quantities
+      for (const item of cart) {
+        try {
+          // Fetch current product data
+          const productResponse = await fetch(`${API_URL}/products/${item.id}`);
+          if (productResponse.ok) {
+            const product = await productResponse.json();
+            const newStockQuantity = Math.max(0, (product.stockQuantity || 0) - item.quantity);
+            
+            // Update product with new stock quantity
+            await fetch(`${API_URL}/products/${item.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                ...product,
+                stockQuantity: newStockQuantity,
+                inStock: newStockQuantity > 0
+              })
+            });
+          }
+        } catch (stockError) {
+          console.error(`Failed to update stock for product ${item.id}:`, stockError);
+          // Continue with order even if stock update fails
+        }
+      }
+
+      // Trigger product refresh on main page
+      window.dispatchEvent(new Event('productsUpdated'));
+
       // Update user's shipping address (skip for guest users)
       if (!user?.isGuest) {
         const userResponse = await fetch(`${API_URL}/users/${user?.id}`);

@@ -39,8 +39,9 @@
         }
       ],
       "inStock": true,
-      "category": "powder",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "category": "Powders",
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "stockQuantity": 100
     },
     {
       "id": "2",
@@ -80,8 +81,9 @@
         }
       ],
       "inStock": true,
-      "category": "powder",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "category": "Powders",
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "stockQuantity": 20
     },
     {
       "id": "3",
@@ -123,8 +125,9 @@
         }
       ],
       "inStock": true,
-      "category": "karam",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "category": "Powders",
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "stockQuantity": 2
     },
     {
       "id": "4",
@@ -165,9 +168,10 @@
           "color": "bg-green-100 text-green-800"
         }
       ],
-      "inStock": true,
-      "category": "karam",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "inStock": false,
+      "category": "Powders",
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "stockQuantity": 0
     },
     {
       "id": "5",
@@ -208,8 +212,48 @@
         }
       ],
       "inStock": true,
-      "category": "powder",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "category": "Powders",
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "stockQuantity": 3
+    },
+    {
+      "id": "1760219064226",
+      "name": "Chicken Pickle",
+      "price": "700",
+      "weight": "500",
+      "description": "chicken pickle",
+      "image": "/Chicken.png",
+      "category": "Non-veg pickles",
+      "searchKeywords": [
+        "chicken",
+        "pickle"
+      ],
+      "features": [
+        {
+          "text": "",
+          "icon": "Leaf",
+          "color": "bg-green-100 text-green-800"
+        },
+        {
+          "text": "",
+          "icon": "Shield",
+          "color": "bg-blue-100 text-blue-800"
+        },
+        {
+          "text": "",
+          "icon": "Award",
+          "color": "bg-purple-100 text-purple-800"
+        },
+        {
+          "text": "",
+          "icon": "Star",
+          "color": "bg-amber-100 text-amber-800"
+        }
+      ],
+      "inStock": true,
+      "stockQuantity": 96,
+      "lowStockThreshold": 10,
+      "createdAt": "2025-10-11T21:43:10.062Z"
     }
   ],
   "users": [
@@ -227,7 +271,11 @@
         "city": "Leander",
         "state": "TX",
         "pincode": "522007"
-      }
+      },
+      "favorites": [
+        "3",
+        "5"
+      ]
     },
     {
       "id": "2",
@@ -252,7 +300,18 @@
       "password": "Eshwar@23",
       "role": "admin",
       "phone": "2016651535",
-      "createdAt": "2025-10-11T17:27:55.594Z"
+      "createdAt": "2025-10-11T17:27:55.594Z",
+      "favorites": [
+        "1760219064226",
+        "4"
+      ],
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522510"
+      }
     }
   ],
   "orders": [
@@ -41912,17 +41971,234 @@
       },
       "createdAt": "2025-10-11T20:29:12.669Z",
       "updatedAt": "2025-10-11T20:29:12.669Z"
+    },
+    {
+      "id": "b084",
+      "userId": "1",
+      "customerName": "Admin User",
+      "customerEmail": "admin@desiroots.store",
+      "customerPhone": "+918179715455",
+      "items": [
+        {
+          "productId": "4",
+          "productName": "Nalla Karam",
+          "quantity": 1,
+          "price": "280",
+          "weight": "500gm"
+        }
+      ],
+      "subtotal": 280,
+      "shippingCharges": 50,
+      "totalAmount": 330,
+      "profit": 84,
+      "paymentMethod": "Cash on Delivery",
+      "status": "pending",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      },
+      "createdAt": "2025-10-11T22:01:37.426Z",
+      "updatedAt": "2025-10-11T22:01:37.426Z"
+    },
+    {
+      "id": "3ac6",
+      "userId": "1",
+      "customerName": "Admin User",
+      "customerEmail": "admin@desiroots.store",
+      "customerPhone": "+918179715455",
+      "items": [
+        {
+          "productId": "4",
+          "productName": "Nalla Karam",
+          "quantity": 1,
+          "price": "280",
+          "weight": "500gm"
+        }
+      ],
+      "subtotal": 280,
+      "shippingCharges": 50,
+      "totalAmount": 330,
+      "profit": 84,
+      "paymentMethod": "Cash on Delivery",
+      "status": "pending",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      },
+      "createdAt": "2025-10-11T22:03:49.411Z",
+      "updatedAt": "2025-10-11T22:03:49.411Z"
+    },
+    {
+      "id": "f54f",
+      "userId": "c016",
+      "customerName": "Suman Inampudi",
+      "customerEmail": "sinampudi.suman@gmail.com",
+      "customerPhone": "2016651535",
+      "items": [
+        {
+          "productId": "1760219064226",
+          "productName": "Chicken Pickle",
+          "quantity": 4,
+          "price": "700",
+          "weight": "500"
+        }
+      ],
+      "subtotal": 2800,
+      "shippingCharges": 0,
+      "totalAmount": 2800,
+      "profit": 840,
+      "paymentMethod": "Cash on Delivery",
+      "status": "delivered",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522510"
+      },
+      "createdAt": "2025-10-11T22:21:27.650Z",
+      "updatedAt": "2025-10-11T22:21:47.721Z"
     }
   ],
   "reviews": [
     {
-      "id": "1",
-      "productId": 1,
-      "userId": 2,
-      "userName": "Demo Customer",
+      "id": "563c",
+      "productId": "1",
+      "productName": "Plain Chilli Powder",
+      "orderId": "202",
+      "userId": "1",
+      "customerName": "Admin User",
       "rating": 5,
-      "comment": "Excellent quality! Authentic taste just like homemade.",
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "comment": "Super tasty",
+      "createdAt": "2025-10-11T22:06:51.073Z"
+    },
+    {
+      "id": "3dcb",
+      "productId": "1760219064226",
+      "productName": "Chicken Pickle",
+      "orderId": "f54f",
+      "userId": "c016",
+      "customerName": "Suman Inampudi",
+      "rating": 5,
+      "comment": "\"The authentic taste of these spices reminds me of my grandmother's cooking. The Chicken Pickle is absolutely divine!\"",
+      "createdAt": "2025-10-11T22:22:28.044Z"
+    },
+    {
+      "id": "9e1c",
+      "productId": "3",
+      "productName": "Kobbari Karam",
+      "orderId": "202",
+      "userId": "1",
+      "customerName": "Admin User",
+      "rating": 5,
+      "comment": "\"I've been searching for authentic Guntur spices for years, and Desi Roots finally delivered! Perfect heat and aroma.\"",
+      "createdAt": "2025-10-11T22:33:12.016Z"
+    },
+    {
+      "id": "c804",
+      "productId": "2",
+      "productName": "Curry Powder",
+      "userId": "2",
+      "customerName": "Priya Sharma",
+      "rating": 5,
+      "comment": "Best curry powder I have ever used! The aroma fills the entire kitchen. My family loves it!",
+      "createdAt": "2025-10-10T14:30:00.000Z"
+    },
+    {
+      "id": "c272",
+      "productId": "5",
+      "productName": "Turmeric Root Powder",
+      "userId": "1",
+      "customerName": "Rajesh Kumar",
+      "rating": 5,
+      "comment": "Pure and fresh turmeric! The color is vibrant and the quality is exceptional. Worth every penny!",
+      "createdAt": "2025-10-09T10:15:00.000Z"
+    },
+    {
+      "id": "b39a",
+      "productId": "4",
+      "productName": "Nalla Karam",
+      "userId": "c016",
+      "customerName": "Lakshmi Devi",
+      "rating": 4,
+      "comment": "Good product with authentic taste. Would have given 5 stars if the packaging was better.",
+      "createdAt": "2025-10-08T16:45:00.000Z"
+    },
+    {
+      "id": "5d45",
+      "productId": "1760219064226",
+      "productName": "Chicken Pickle",
+      "userId": "2",
+      "customerName": "Venkat Reddy",
+      "rating": 5,
+      "comment": "Absolutely delicious! The spice level is perfect and the chicken is so tender. My kids ask for it every day!",
+      "createdAt": "2025-10-07T12:20:00.000Z"
+    },
+    {
+      "id": "26c9",
+      "productId": "3",
+      "productName": "Kobbari Karam",
+      "userId": "1",
+      "customerName": "Anitha Rao",
+      "rating": 5,
+      "comment": "This brings back memories of home! The coconut flavor is rich and authentic. Best Kobbari Karam in the market!",
+      "createdAt": "2025-10-06T09:30:00.000Z"
+    },
+    {
+      "id": "86ec",
+      "productId": "2",
+      "productName": "Curry Powder",
+      "userId": "c016",
+      "customerName": "Meena Patel",
+      "rating": 4,
+      "comment": "Very good curry powder. The blend of spices is well balanced. I use it in all my curries now!",
+      "createdAt": "2025-10-05T18:00:00.000Z"
+    },
+    {
+      "id": "fc08",
+      "productId": "1",
+      "productName": "Plain Chilli Powder",
+      "userId": "2",
+      "customerName": "Karthik Naidu",
+      "rating": 5,
+      "comment": "Perfect heat level! Not too spicy, not too mild. The quality is top-notch and very fresh!",
+      "createdAt": "2025-10-04T11:45:00.000Z"
+    },
+    {
+      "id": "2b1e",
+      "productId": "5",
+      "productName": "Turmeric Root Powder",
+      "userId": "c016",
+      "customerName": "Divya Krishnan",
+      "rating": 5,
+      "comment": "Excellent quality turmeric! I can see and taste the difference compared to store-bought ones. Highly recommend!",
+      "createdAt": "2025-10-03T15:20:00.000Z"
+    },
+    {
+      "id": "3bcc",
+      "productId": "4",
+      "productName": "Nalla Karam",
+      "userId": "1",
+      "customerName": "Suresh Babu",
+      "rating": 5,
+      "comment": "Amazing blend! My wife uses it for everything. The taste is so authentic and traditional. Will order again!",
+      "createdAt": "2025-10-02T08:15:00.000Z"
+    },
+    {
+      "id": "2f0f",
+      "productId": "1760219064226",
+      "productName": "Chicken Pickle",
+      "userId": "1",
+      "customerName": "Ramya Iyer",
+      "rating": 4,
+      "comment": "Tasty pickle with good spice balance. My only suggestion would be to make it slightly less oily. Otherwise perfect!",
+      "createdAt": "2025-10-01T19:30:00.000Z"
     }
   ],
   "cart": [],

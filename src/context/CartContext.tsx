@@ -60,14 +60,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    // Check stock availability
+    const availableStock = product.stockQuantity || 0;
+    if (availableStock <= 0 || product.inStock === false) {
+      alert('Sorry, this product is currently out of stock.');
+      return;
+    }
+
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
       
       if (existingItem) {
+        // Check if we can increase quantity
+        const newQuantity = existingItem.quantity + 1;
+        if (newQuantity > availableStock) {
+          alert(`Sorry, only ${availableStock} units available in stock.`);
+          return prevCart;
+        }
+        
         // Increase quantity if item already exists
         return prevCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: newQuantity }
             : item
         );
       } else {

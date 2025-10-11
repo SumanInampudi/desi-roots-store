@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, Package, BarChart3, TrendingUp, Receipt, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, Package, BarChart3, TrendingUp, Receipt, ChevronDown, LayoutDashboard, Box } from 'lucide-react';
 import Logo from './Logo';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,7 @@ import OrderHistory from './OrderHistory';
 import AdminDashboard from './AdminDashboard';
 import RevenueChart from './RevenueChart';
 import ExpenseDashboard from './ExpenseDashboard';
+import ProductManagement from './ProductManagement';
 import API_URL from '../config/api';
 
 interface HeaderProps {
@@ -22,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [showRevenueChart, setShowRevenueChart] = useState(false);
   const [showExpenseDashboard, setShowExpenseDashboard] = useState(false);
+  const [showProductManagement, setShowProductManagement] = useState(false);
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -142,6 +144,19 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                         <div className="text-left">
                           <div className="font-semibold">Admin Dashboard</div>
                           <div className="text-xs text-gray-500">Orders & Analytics</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowProductManagement(true);
+                          setShowAdminDropdown(false);
+                        }}
+                        className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-red-800 hover:bg-red-50 transition-colors duration-200"
+                      >
+                        <Box size={18} className="text-purple-600" />
+                        <div className="text-left">
+                          <div className="font-semibold">Product Management</div>
+                          <div className="text-xs text-gray-500">Manage Inventory & Stock</div>
                         </div>
                       </button>
                       <button
@@ -326,6 +341,19 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
                   </button>
                   <button
                     onClick={() => {
+                      setShowProductManagement(true);
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center space-x-3 w-full text-left px-3 py-2.5 rounded-md text-base font-medium text-gray-700 hover:text-red-800 hover:bg-red-50 transition-colors duration-200"
+                  >
+                    <Box size={18} className="text-purple-600" />
+                    <div>
+                      <div className="font-semibold">Product Management</div>
+                      <div className="text-xs text-gray-500">Manage Inventory & Stock</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
                       setShowRevenueChart(true);
                       setIsMenuOpen(false);
                     }}
@@ -433,6 +461,14 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavClick }) => {
       <ExpenseDashboard 
         isOpen={showExpenseDashboard} 
         onClose={() => setShowExpenseDashboard(false)}
+      />
+    )}
+    
+    {/* Product Management Modal */}
+    {isAdmin && (
+      <ProductManagement 
+        isOpen={showProductManagement} 
+        onClose={() => setShowProductManagement(false)}
       />
     )}
     </>

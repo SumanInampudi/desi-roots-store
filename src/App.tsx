@@ -10,6 +10,7 @@ import CustomerSupport from './components/CustomerSupport';
 import Cart from './components/Cart';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 import API_URL from './config/api';
 
 function App() {
@@ -19,20 +20,49 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   // Fetch products from API
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/products?_=${Date.now()}`); // Cache buster
+      const data = await response.json();
+      setProducts(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`${API_URL}/products`);
-        const data = await response.json();
-        setProducts(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setLoading(false);
+    fetchProducts();
+  }, []);
+
+  // Refetch products when page becomes visible (e.g., after editing in Product Management)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchProducts();
       }
     };
 
-    fetchProducts();
+    const handleFocus = () => {
+      fetchProducts();
+    };
+
+    const handleProductsUpdate = () => {
+      console.log('Products updated - refreshing...');
+      fetchProducts();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('productsUpdated', handleProductsUpdate);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('productsUpdated', handleProductsUpdate);
+    };
   }, []);
 
   useEffect(() => {
@@ -95,39 +125,43 @@ function App() {
   if (loading) {
     return (
       <AuthProvider>
-        <CartProvider>
-          <div className="min-h-screen bg-white flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Loading products...</p>
+        <FavoritesProvider>
+          <CartProvider>
+            <div className="min-h-screen bg-white flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
+                <p className="text-gray-600 text-lg">Loading products...</p>
+              </div>
             </div>
-          </div>
-        </CartProvider>
+          </CartProvider>
+        </FavoritesProvider>
       </AuthProvider>
     );
   }
 
   return (
     <AuthProvider>
-      <CartProvider>
-        <div className="min-h-screen bg-white">
-          <Header activeSection={activeSection} onNavClick={handleNavClick} />
-          <Hero 
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            resultsCount={filteredProducts.length}
-            totalCount={products.length}
-            filteredProducts={filteredProducts}
-          />
-          <Products searchTerm={searchTerm} />
-          <Testimonials />
-          <About />
-          <Contact />
-          <Footer />
-          <CustomerSupport />
-          <Cart />
-        </div>
-      </CartProvider>
+      <FavoritesProvider>
+        <CartProvider>
+          <div className="min-h-screen bg-white">
+            <Header activeSection={activeSection} onNavClick={handleNavClick} />
+            <Hero 
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              resultsCount={filteredProducts.length}
+              totalCount={products.length}
+              filteredProducts={filteredProducts}
+            />
+            <Products searchTerm={searchTerm} />
+            <Testimonials />
+            <About />
+            <Contact />
+            <Footer />
+            <CustomerSupport />
+            <Cart />
+          </div>
+        </CartProvider>
+      </FavoritesProvider>
     </AuthProvider>
   );
 }

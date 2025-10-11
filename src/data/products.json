@@ -6,6 +6,7 @@
     "weight": "500gm",
     "description": "Pure, aromatic chilli powder made from the finest red chillies. Perfect for adding heat and flavor to any dish.",
     "image": "/plain-chilli-powder.jpeg",
+    "category": "Powders",
     "searchKeywords": ["chilli", "chili", "red", "hot", "spicy", "heat", "powder"],
     "features": [
       {
@@ -37,6 +38,7 @@
     "weight": "500gm",
     "description": "A perfect blend of aromatic spices that brings authentic curry flavors to your kitchen. Versatile and full of taste.",
     "image": "/curry-powder.jpeg",
+    "category": "Powders",
     "searchKeywords": ["curry", "blend", "aromatic", "spices", "masala", "powder"],
     "features": [
       {
@@ -68,6 +70,7 @@
     "weight": "500gm",
     "description": "Traditional coconut-based spice mix with aromatic ingredients. A perfect accompaniment for rice, idli, and dosa with authentic South Indian flavors.",
     "image": "/kobbari-karam.jpeg",
+    "category": "Powders",
     "searchKeywords": ["kobbari", "coconut", "karam", "south indian", "rice", "idli", "dosa", "traditional"],
     "features": [
       {
@@ -99,6 +102,7 @@
     "weight": "500gm",
     "description": "A rich and tangy spice blend made with premium tamarind, garlic, and aromatic spices. Perfect for enhancing rice dishes and traditional meals with its distinctive sour-spicy flavor.",
     "image": "/nalla-karam.jpeg",
+    "category": "Powders",
     "searchKeywords": ["nalla", "karam", "tamarind", "garlic", "tangy", "sour", "spicy", "rice"],
     "features": [
       {
@@ -130,6 +134,7 @@
     "weight": "500gm",
     "description": "Premium quality turmeric powder made from fresh turmeric roots. Known for its vibrant color, earthy flavor, and health benefits.",
     "image": "/turmeric-root-powder.jpeg",
+    "category": "Powders",
     "searchKeywords": ["turmeric", "haldi", "yellow", "root", "health", "curcumin", "powder"],
     "features": [
       {

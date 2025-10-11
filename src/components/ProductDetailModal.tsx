@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, MessageCircle, Minus, Plus, Star, Leaf, Award, Shield } from 'lucide-react';
+import { X, ShoppingCart, MessageCircle, Minus, Plus, Star, Leaf, Award, Shield, Circle, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
+import { useProductReviews } from '../hooks/useProductReviews';
 import Auth from './Auth';
 
 interface ProductDetailModalProps {
@@ -21,10 +23,36 @@ const getIcon = (iconName: string) => {
   return icons[iconName] || <Star className="w-4 h-4" />;
 };
 
+// Helper function to check if product is non-veg
+const isNonVeg = (category: string) => {
+  return category?.toLowerCase().includes('non-veg');
+};
+
+// Veg/Non-veg Badge Component (Icon Only)
+const DietaryBadge: React.FC<{ category: string }> = ({ category }) => {
+  const nonVeg = isNonVeg(category);
+  
+  if (nonVeg) {
+    return (
+      <div className="inline-flex items-center justify-center w-5 h-5 bg-white border-2 border-red-600 rounded" title="Non-Veg">
+        <Circle className="w-2.5 h-2.5 fill-red-600 text-red-600" />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="inline-flex items-center justify-center w-5 h-5 bg-white border-2 border-green-600 rounded" title="Veg">
+      <Circle className="w-2.5 h-2.5 fill-green-600 text-green-600" />
+    </div>
+  );
+};
+
 const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen, onClose, onAddToCart: onAddToCartCallback }) => {
   const [quantity, setQuantity] = useState(1);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { productRating } = useProductReviews(product?.id);
 
   if (!isOpen || !product) return null;
 
@@ -73,13 +101,35 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
           className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors duration-200"
-          >
-            <X className="w-6 h-6 text-gray-600" />
-          </button>
+          {/* Top Right Actions */}
+          <div className="absolute top-4 right-4 z-10 flex gap-2">
+            {/* Favorite Button */}
+            <button
+              onClick={() => toggleFavorite(product.id.toString())}
+              className={`p-2 rounded-full shadow-lg transition-all duration-200 ${
+                isFavorite(product.id.toString())
+                  ? 'bg-red-500 hover:bg-red-600'
+                  : 'bg-white/90 hover:bg-white'
+              }`}
+              title={isFavorite(product.id.toString()) ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Heart
+                className={`w-6 h-6 ${
+                  isFavorite(product.id.toString())
+                    ? 'text-white fill-white'
+                    : 'text-gray-600'
+                }`}
+              />
+            </button>
+            
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors duration-200"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Product Image */}
@@ -89,6 +139,35 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                 alt={product.name}
                 className="w-full h-full object-cover rounded-tl-2xl md:rounded-bl-2xl md:rounded-tr-none"
               />
+              {/* Availability Badge */}
+              <div className="absolute top-4 right-4">
+                {(() => {
+                  const hasStock = product.stockQuantity != null && product.stockQuantity > 0;
+                  const isInStock = product.inStock !== false;
+                  const isAvailable = isInStock && hasStock;
+                  const lowStock = product.stockQuantity != null && product.stockQuantity < 5 && product.stockQuantity > 0;
+                  
+                  if (!isAvailable) {
+                    return (
+                      <span className="px-3 py-1.5 bg-red-500 text-white text-sm font-semibold rounded-full shadow-lg">
+                        Out of Stock
+                      </span>
+                    );
+                  } else if (lowStock) {
+                    return (
+                      <span className="px-4 py-2 bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 text-white text-sm font-bold rounded-full shadow-2xl animate-pulse border-2 border-orange-300">
+                        🔥 Only {product.stockQuantity} left!
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="px-3 py-1.5 bg-green-500 text-white text-sm font-semibold rounded-full shadow-lg">
+                        In Stock
+                      </span>
+                    );
+                  }
+                })()}
+              </div>
               {/* Price Badge */}
               <div className="absolute top-4 left-4">
                 <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
@@ -103,14 +182,28 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
             {/* Product Details */}
             <div className="p-8">
               <div className="mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h2>
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-500">(5.0)</span>
+                <div className="flex items-start gap-2 mb-2">
+                  <DietaryBadge category={product.category} />
+                  <h2 className="text-3xl font-bold text-gray-900 flex-1">{product.name}</h2>
+                </div>
+                <div className="flex items-center space-x-3">
+                  {productRating.totalReviews > 0 ? (
+                    <>
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`w-4 h-4 ${i < Math.round(productRating.averageRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-500">({productRating.averageRating} - {productRating.totalReviews} {productRating.totalReviews === 1 ? 'review' : 'reviews'})</span>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-500">No reviews yet</span>
+                  )}
+                  {product.category && (
+                    <span className="px-3 py-1 bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-xs font-semibold rounded-full border border-red-200">
+                      {product.category}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -136,12 +229,47 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
               </div>
 
               {/* Stock Status */}
-              <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center text-green-800">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-sm font-medium">In Stock - Ready to Ship</span>
-                </div>
-              </div>
+              {(() => {
+                const hasStock = product.stockQuantity != null && product.stockQuantity > 0;
+                const isInStock = product.inStock !== false;
+                const isAvailable = isInStock && hasStock;
+                const lowStock = product.stockQuantity != null && product.stockQuantity < 5 && product.stockQuantity > 0;
+                
+                return (
+                  <div className={`mb-6 p-4 rounded-xl border-2 ${
+                    !isAvailable 
+                      ? 'bg-red-50 border-red-300'
+                      : lowStock 
+                        ? 'bg-gradient-to-r from-orange-50 via-orange-100 to-red-50 border-orange-400 shadow-lg'
+                        : 'bg-green-50 border-green-200'
+                  }`}>
+                    <div className={`flex items-center justify-between ${
+                      !isAvailable
+                        ? 'text-red-800'
+                        : lowStock
+                          ? 'text-orange-900'
+                          : 'text-green-800'
+                    }`}>
+                      <div className="flex items-center">
+                        <div className={`w-3 h-3 rounded-full mr-3 ${
+                          !isAvailable 
+                            ? 'bg-red-500'
+                            : lowStock
+                              ? 'bg-orange-500 animate-pulse'
+                              : 'bg-green-500 animate-pulse'
+                        }`}></div>
+                        <span className={`text-sm ${lowStock ? 'font-bold text-base' : 'font-medium'}`}>
+                          {!isAvailable 
+                            ? 'Out of Stock' 
+                            : lowStock
+                              ? `🔥 Only ${product.stockQuantity} ${product.stockQuantity === 1 ? 'unit' : 'units'} left - Order now!`
+                              : 'In Stock - Ready to Ship'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Quantity Selector */}
               <div className="mb-6">
@@ -178,18 +306,28 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
               <div className="space-y-3">
                 <button
                   onClick={handleAddToCart}
-                  className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={product.inStock === false || !product.stockQuantity || product.stockQuantity <= 0}
+                  className={`w-full font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg ${
+                    product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white hover:shadow-xl transform hover:scale-105'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  <span>Add {quantity} to Cart</span>
+                  <span>{product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0 ? `Add ${quantity} to Cart` : 'Out of Stock'}</span>
                 </button>
 
                 <button
                   onClick={handleWhatsAppOrder}
-                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg"
+                  disabled={product.inStock === false || !product.stockQuantity || product.stockQuantity <= 0}
+                  className={`w-full font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg ${
+                    product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover:shadow-xl transform hover:scale-105'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
-                  <MessageCircle className="w-5 h-5 animate-pulse" />
-                  <span>Order via WhatsApp</span>
+                  <MessageCircle className="w-5 h-5" />
+                  <span>{product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0 ? 'Order via WhatsApp' : 'Out of Stock'}</span>
                 </button>
               </div>
 
@@ -214,6 +352,40 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                   </div>
                 </div>
               </div>
+
+              {/* Customer Reviews */}
+              {productRating.totalReviews > 0 && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h3 className="font-bold text-gray-900 text-lg mb-4">Customer Reviews</h3>
+                  <div className="space-y-4 max-h-64 overflow-y-auto">
+                    {productRating.reviews.map((review) => (
+                      <div key={review.id} className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <p className="font-semibold text-gray-900">{review.customerName}</p>
+                            <div className="flex items-center mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                />
+                              ))}
+                              <span className="text-xs text-gray-500 ml-2">
+                                {new Date(review.createdAt).toLocaleDateString('en-IN', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-700">{review.comment}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

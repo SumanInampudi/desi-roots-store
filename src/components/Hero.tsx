@@ -1,12 +1,37 @@
 import React from 'react';
-import { Truck, Leaf, Award, Clock, Star, X, ShoppingCart, Plus, Minus, MessageCircle } from 'lucide-react';
+import { Truck, Leaf, Award, Clock, Star, X, ShoppingCart, Plus, Minus, MessageCircle, Circle, Heart, Eye } from 'lucide-react';
 import SearchBar from './SearchBar';
 import NoResults from './NoResults';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import Auth from './Auth';
 import ProductDetailModal from './ProductDetailModal';
 import Toast from './Toast';
+
+// Helper function to check if product is non-veg
+const isNonVeg = (category: string) => {
+  return category?.toLowerCase().includes('non-veg');
+};
+
+// Veg/Non-veg Badge Component (Icon Only)
+const DietaryBadge: React.FC<{ category: string }> = ({ category }) => {
+  const nonVeg = isNonVeg(category);
+  
+  if (nonVeg) {
+    return (
+      <div className="inline-flex items-center justify-center w-5 h-5 bg-white border-2 border-red-600 rounded" title="Non-Veg">
+        <Circle className="w-2.5 h-2.5 fill-red-600 text-red-600" />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="inline-flex items-center justify-center w-5 h-5 bg-white border-2 border-green-600 rounded" title="Veg">
+      <Circle className="w-2.5 h-2.5 fill-green-600 text-green-600" />
+    </div>
+  );
+};
 
 interface HeroProps {
   searchTerm: string;
@@ -31,6 +56,7 @@ const Hero: React.FC<HeroProps> = ({
   const [toastMessage, setToastMessage] = React.useState('');
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   // Close search results on ESC key
   React.useEffect(() => {
@@ -285,12 +311,46 @@ const Hero: React.FC<HeroProps> = ({
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
-                        <h4 
-                          className="font-semibold text-gray-900 text-sm truncate cursor-pointer hover:text-orange-600 transition-colors"
-                          onClick={() => setSelectedProduct(product)}
-                        >
-                          {product.name}
-                        </h4>
+                        <div className="flex items-center gap-2">
+                          <DietaryBadge category={product.category} />
+                          <h4 
+                            className="font-semibold text-gray-900 text-sm truncate cursor-pointer hover:text-orange-600 transition-colors"
+                            onClick={() => setSelectedProduct(product)}
+                          >
+                            {product.name}
+                          </h4>
+                          {product.category && (
+                            <span className="px-2 py-0.5 bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-xs font-semibold rounded-full border border-red-200 flex-shrink-0">
+                              {product.category}
+                            </span>
+                          )}
+                          {(() => {
+                            const hasStock = product.stockQuantity != null && product.stockQuantity > 0;
+                            const isInStock = product.inStock !== false;
+                            const isAvailable = isInStock && hasStock;
+                            const lowStock = product.stockQuantity != null && product.stockQuantity < 5 && product.stockQuantity > 0;
+                            
+                            if (!isAvailable) {
+                              return (
+                                <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded-full flex-shrink-0">
+                                  Out of Stock
+                                </span>
+                              );
+                            } else if (lowStock) {
+                              return (
+                                <span className="px-2.5 py-1 bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 text-white text-xs font-bold rounded-full flex-shrink-0 animate-pulse border-2 border-orange-300 shadow-lg">
+                                  🔥 Only {product.stockQuantity} left!
+                                </span>
+                              );
+                            } else {
+                              return (
+                                <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-semibold rounded-full flex-shrink-0">
+                                  In Stock
+                                </span>
+                              );
+                            }
+                          })()}
+                        </div>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-orange-600 font-bold text-sm">₹{product.price}</span>
                           <span className="text-gray-500 text-xs">• {product.weight}</span>
@@ -300,6 +360,30 @@ const Hero: React.FC<HeroProps> = ({
                           </div>
                         </div>
                       </div>
+
+                      {/* Favorite Button */}
+                      {isAuthenticated && (
+                        <button
+                          onClick={() => toggleFavorite(product.id.toString())}
+                          className={`flex-shrink-0 p-2.5 rounded-lg transition-all duration-200 shadow-md transform hover:scale-105 active:scale-95 ${
+                            isFavorite(product.id.toString())
+                              ? 'bg-red-500 hover:bg-red-600 text-white'
+                              : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-200'
+                          }`}
+                          title={isFavorite(product.id.toString()) ? "Remove from favorites" : "Add to favorites"}
+                        >
+                          <Heart className={`w-5 h-5 ${isFavorite(product.id.toString()) ? 'fill-white' : ''}`} />
+                        </button>
+                      )}
+
+                      {/* View Details Button */}
+                      <button
+                        onClick={() => setSelectedProduct(product)}
+                        className="flex-shrink-0 p-2.5 bg-white hover:bg-gray-50 text-gray-600 rounded-lg transition-all duration-200 shadow-md transform hover:scale-105 active:scale-95 border border-gray-200"
+                        title="View Details"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
 
                       {/* Quantity Controls */}
                       <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1">
@@ -325,8 +409,13 @@ const Hero: React.FC<HeroProps> = ({
                       {/* Add to Cart Icon Button */}
                       <button
                         onClick={() => handleAddToCart(product)}
-                        className="flex-shrink-0 p-2.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
-                        title={`Add ${getQuantity(product.id)} to cart`}
+                        disabled={product.inStock === false || !product.stockQuantity || product.stockQuantity <= 0}
+                        className={`flex-shrink-0 p-2.5 rounded-lg transition-all duration-200 shadow-md ${
+                          product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0
+                            ? 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white hover:shadow-lg transform hover:scale-105 active:scale-95'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                        title={product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0 ? `Add ${getQuantity(product.id)} to cart` : "Out of Stock"}
                       >
                         <ShoppingCart className="w-5 h-5" />
                       </button>
@@ -334,8 +423,13 @@ const Hero: React.FC<HeroProps> = ({
                       {/* WhatsApp Order Icon Button */}
                       <button
                         onClick={() => handleWhatsAppOrder(product)}
-                        className="flex-shrink-0 p-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
-                        title="Order on WhatsApp"
+                        disabled={product.inStock === false || !product.stockQuantity || product.stockQuantity <= 0}
+                        className={`flex-shrink-0 p-2.5 rounded-lg transition-all duration-200 shadow-md ${
+                          product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0
+                            ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover:shadow-lg transform hover:scale-105 active:scale-95'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                        title={product.inStock !== false && product.stockQuantity != null && product.stockQuantity > 0 ? "Order on WhatsApp" : "Out of Stock"}
                       >
                         <MessageCircle className="w-5 h-5" />
                       </button>
