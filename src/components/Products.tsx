@@ -185,7 +185,7 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
 
   const handleWhatsAppOrder = (productName: string) => {
     const message = `Hi! I'd like to order ${productName}. Could you please provide me with more details about pricing and availability?`;
-    const whatsappUrl = `https://wa.me/918179715455?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918179542401?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

@@ -14,7 +14,7 @@ const Cart: React.FC = () => {
     
     const total = getCartTotal();
     const message = `Hi! I'd like to place an order:%0A%0A${items}%0A%0ATotal: ₹${total}%0A%0APlease confirm availability and delivery details.`;
-    const whatsappUrl = `https://wa.me/918179715455?text=${message}`;
+    const whatsappUrl = `https://wa.me/918179542401?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
 

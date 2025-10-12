@@ -6,7 +6,7 @@ const CustomerSupport: React.FC = () => {
 
   const handleWhatsAppSupport = () => {
     const message = "Hi! I need help with your products and services. Could you please assist me?";
-    const whatsappUrl = `https://wa.me/918179715455?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918179542401?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

@@ -80,7 +80,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
 
   const handleWhatsAppOrder = () => {
     const message = `Hi! I'd like to order ${quantity}x ${product.name} (${product.weight}) - ₹${parseFloat(product.price) * quantity}. Please provide details about availability and delivery.`;
-    const whatsappUrl = `https://wa.me/918179715455?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918179542401?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

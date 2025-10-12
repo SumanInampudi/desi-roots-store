@@ -524,7 +524,7 @@ const Hero: React.FC<HeroProps> = ({
                 View Our Products
               </button>
               <a
-                href="https://wa.me/918179715455?text=Hi, I'm interested in your spice products!"
+                href="https://wa.me/918179542401?text=Hi, I'm interested in your spice products!"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center space-x-2 hover:shadow-xl"

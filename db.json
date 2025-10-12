@@ -127,7 +127,7 @@
       "inStock": true,
       "category": "Powders",
       "createdAt": "2025-10-11T00:00:00.000Z",
-      "stockQuantity": 2
+      "stockQuantity": 1
     },
     {
       "id": "4",
@@ -263,7 +263,7 @@
       "email": "admin@desiroots.store",
       "password": "admin123",
       "role": "admin",
-      "phone": "+918179715455",
+      "phone": "+918179542401",
       "createdAt": "2025-10-11T00:00:00.000Z",
       "shippingAddress": {
         "addressLine1": "116 Macarthur Dr",
@@ -291,7 +291,10 @@
         "state": "Telangana",
         "pincode": "500001"
       },
-      "createdAt": "2025-10-11T00:00:00.000Z"
+      "createdAt": "2025-10-11T00:00:00.000Z",
+      "favorites": [
+        "1760219064226"
+      ]
     },
     {
       "id": "c016",
@@ -41977,7 +41980,7 @@
       "userId": "1",
       "customerName": "Admin User",
       "customerEmail": "admin@desiroots.store",
-      "customerPhone": "+918179715455",
+      "customerPhone": "+918179542401",
       "items": [
         {
           "productId": "4",
@@ -42008,7 +42011,7 @@
       "userId": "1",
       "customerName": "Admin User",
       "customerEmail": "admin@desiroots.store",
-      "customerPhone": "+918179715455",
+      "customerPhone": "+918179542401",
       "items": [
         {
           "productId": "4",
@@ -42064,6 +42067,44 @@
       },
       "createdAt": "2025-10-11T22:21:27.650Z",
       "updatedAt": "2025-10-11T22:21:47.721Z"
+    },
+    {
+      "id": "2c6a",
+      "userId": "1",
+      "customerName": "Admin User",
+      "customerEmail": "admin@desiroots.store",
+      "customerPhone": "+918179542401",
+      "items": [
+        {
+          "productId": "1760219064226",
+          "productName": "Chicken Pickle",
+          "quantity": 1,
+          "price": "700",
+          "weight": "500"
+        },
+        {
+          "productId": "3",
+          "productName": "Kobbari Karam",
+          "quantity": 1,
+          "price": "300",
+          "weight": "500gm"
+        }
+      ],
+      "subtotal": 1000,
+      "shippingCharges": 0,
+      "totalAmount": 1000,
+      "profit": 300,
+      "paymentMethod": "Cash on Delivery",
+      "status": "pending",
+      "shippingAddress": {
+        "addressLine1": "116 Macarthur Dr",
+        "addressLine2": "",
+        "city": "Leander",
+        "state": "TX",
+        "pincode": "522007"
+      },
+      "createdAt": "2025-10-12T00:24:21.567Z",
+      "updatedAt": "2025-10-12T00:24:21.567Z"
     }
   ],
   "reviews": [

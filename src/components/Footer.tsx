@@ -64,13 +64,13 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Get in Touch</h3>
             <div className="space-y-3">
               <p className="text-gray-400">
-                <span className="font-medium">Phone:</span> +91 81797 15455
+                <span className="font-medium">Phone:</span> +91 81795 42401
               </p>
               <p className="text-gray-400">
                 <span className="font-medium">Email:</span> orders@desiroots.com
               </p>
               <a
-                href="https://wa.me/918179715455"
+                href="https://wa.me/918179542401"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 text-green-400 hover:text-green-300 transition-colors duration-200"
