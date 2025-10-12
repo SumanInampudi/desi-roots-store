@@ -122,22 +122,8 @@ function App() {
     });
   }, [searchTerm, products]);
 
-  if (loading) {
-    return (
-      <AuthProvider>
-        <FavoritesProvider>
-          <CartProvider>
-            <div className="min-h-screen bg-white flex items-center justify-center">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
-                <p className="text-gray-600 text-lg">Loading products...</p>
-              </div>
-            </div>
-          </CartProvider>
-        </FavoritesProvider>
-      </AuthProvider>
-    );
-  }
+  // Note: We now show static content (Header, Hero, Footer) even while loading
+  // The Products and Testimonials components handle their own loading states with fancy skeletons
 
   return (
     <AuthProvider>

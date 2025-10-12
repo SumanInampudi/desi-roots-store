@@ -125,11 +125,77 @@ const Testimonials: React.FC = () => {
 
   if (loading) {
     return (
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading customer reviews...</p>
+      <section className="py-20 bg-gradient-to-br from-gray-50 via-orange-50 to-red-50 relative overflow-hidden">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-6 h-6 text-amber-500 fill-amber-500" />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold text-gray-600 bg-white px-4 py-2 rounded-full shadow-md">
+                  Happy Customers
+                </span>
+              </div>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-red-800 to-orange-600 bg-clip-text text-transparent mb-4">
+              What Our Customers Say
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+              Real reviews from customers who love our authentic spice blends
+            </p>
+
+            {/* Fancy Loading Progress */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+                <div className="relative w-8 h-8">
+                  <div className="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-red-600 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <span className="text-gray-700 font-semibold">Loading reviews...</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Skeleton Loader - Review Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {[1, 2].map((index) => (
+              <div
+                key={index}
+                className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 animate-pulse"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="h-1.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"></div>
+                <div className="p-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex space-x-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="w-4 h-4 bg-gray-200 rounded"></div>
+                      ))}
+                    </div>
+                    <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                  </div>
+                  <div className="h-8 bg-gray-200 rounded-full w-32 mb-5"></div>
+                  <div className="space-y-2 mb-8">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </div>
+                  <div className="flex items-center justify-between pt-6 border-t-2 border-gray-100">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-14 h-14 bg-gray-200 rounded-full"></div>
+                      <div>
+                        <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -198,11 +198,78 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
     return (
       <section id="products" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 text-lg">Loading products...</p>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Our Premium Products
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Discover our carefully curated selection of authentic spice blends, crafted with traditional methods and premium ingredients.
+            </p>
+          </div>
+
+          {/* Fancy Loading Progress Bar */}
+          <div className="mb-12">
+            <div className="flex items-center justify-center mb-4">
+              <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-lg">
+                <div className="relative w-8 h-8">
+                  <div className="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-red-600 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <span className="text-gray-700 font-semibold">Loading delicious products...</span>
+              </div>
+            </div>
+            
+            {/* Animated Progress Bar */}
+            <div className="max-w-md mx-auto">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 rounded-full animate-pulse" 
+                     style={{ width: '100%', animation: 'pulse 1.5s ease-in-out infinite' }}>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Skeleton Loader - Product Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            {[...Array(12)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                {/* Image skeleton */}
+                <div className="aspect-square bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_200%] animate-shimmer"></div>
+                
+                {/* Content skeleton */}
+                <div className="p-3">
+                  <div className="h-4 bg-gray-200 rounded mb-3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-3/4 mb-3"></div>
+                  <div className="flex gap-2">
+                    <div className="h-8 bg-gray-200 rounded flex-1"></div>
+                    <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Loading message with animation */}
+          <div className="text-center mt-8">
+            <p className="text-gray-500 text-sm animate-pulse">
+              Fetching fresh products from our collection...
+            </p>
           </div>
         </div>
+
+        <style>{`
+          @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s ease-in-out infinite;
+          }
+        `}</style>
       </section>
     );
   }
