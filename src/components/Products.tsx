@@ -286,34 +286,54 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
           </p>
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex justify-center mb-4">
-          <div className="inline-flex flex-wrap gap-2 p-2 bg-white rounded-xl shadow-md">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
-                  selectedCategory === category
-                    ? category === 'Favorites'
-                      ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg'
-                      : 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category === 'Favorites' && (
-                  <Heart className={`w-4 h-4 ${selectedCategory === category ? 'fill-white' : ''}`} />
-                )}
-                {category}
-                {category === 'Favorites' && favorites.length > 0 && (
-                  <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-                    selectedCategory === category ? 'bg-white/20' : 'bg-red-100 text-red-600'
-                  }`}>
-                    {favorites.length}
-                  </span>
-                )}
-              </button>
-            ))}
+        {/* Category Tabs - Mobile Optimized with Horizontal Scroll */}
+        <div className="mb-4">
+          <div className="relative">
+            {/* Gradient fade indicators for mobile scroll */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none md:hidden"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none md:hidden"></div>
+            
+            {/* Scrollable tabs container */}
+            <div className="overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+              <div className="flex md:justify-center gap-2 min-w-max md:min-w-0 md:flex-wrap md:p-2 md:bg-white md:rounded-xl md:shadow-md md:inline-flex">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`
+                      flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 
+                      rounded-full md:rounded-lg font-medium text-sm md:text-base
+                      transition-all duration-200 whitespace-nowrap
+                      flex-shrink-0 transform hover:scale-105 active:scale-95
+                      ${selectedCategory === category
+                        ? category === 'Favorites'
+                          ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg'
+                          : 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md border border-gray-200'
+                      }
+                    `}
+                  >
+                    {category === 'Favorites' && (
+                      <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selectedCategory === category ? 'fill-white' : ''}`} />
+                    )}
+                    <span className="font-semibold">{category}</span>
+                    {category === 'Favorites' && favorites.length > 0 && (
+                      <span className={`
+                        px-1.5 md:px-2 py-0.5 rounded-full text-xs font-bold
+                        ${selectedCategory === category ? 'bg-white/20' : 'bg-red-100 text-red-600'}
+                      `}>
+                        {favorites.length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Mobile scroll hint */}
+            <div className="text-center mt-2 md:hidden">
+              <p className="text-xs text-gray-400 animate-pulse">← Swipe to explore categories →</p>
+            </div>
           </div>
         </div>
 
@@ -523,6 +543,17 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
         isVisible={showToast}
         onClose={() => setShowToast(false)}
       />
+
+      {/* Hide scrollbar for smooth mobile experience */}
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 };
