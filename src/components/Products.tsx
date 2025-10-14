@@ -286,41 +286,42 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
           </p>
         </div>
 
-        {/* Category Tabs - Mobile Optimized with Horizontal Scroll */}
-        <div className="mb-4">
-          <div className="relative">
-            {/* Gradient fade indicators for mobile scroll */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none md:hidden"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none md:hidden"></div>
-            
-            {/* Scrollable tabs container */}
-            <div className="overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 md:mx-0 md:px-0">
-              <div className="flex md:justify-center gap-2 min-w-max md:min-w-0 md:flex-wrap md:p-2 md:bg-white md:rounded-xl md:shadow-md md:inline-flex">
+        {/* Category Tabs - iOS Segmented Control Style */}
+        <div className="mb-6 px-4 md:px-0">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gray-100 rounded-2xl p-1.5 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-1 min-w-max md:grid md:grid-cols-6 md:min-w-0">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
                     className={`
-                      flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 
-                      rounded-full md:rounded-lg font-medium text-sm md:text-base
-                      transition-all duration-200 whitespace-nowrap
-                      flex-shrink-0 transform hover:scale-105 active:scale-95
+                      px-4 py-3 rounded-xl font-semibold text-sm
+                      transition-all duration-300 whitespace-nowrap
+                      flex items-center justify-center gap-2
                       ${selectedCategory === category
-                        ? category === 'Favorites'
-                          ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg'
-                          : 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md border border-gray-200'
+                        ? 'bg-white shadow-lg text-gray-900 scale-105 transform'
+                        : 'text-gray-600 hover:text-gray-900'
                       }
                     `}
                   >
                     {category === 'Favorites' && (
-                      <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${selectedCategory === category ? 'fill-white' : ''}`} />
+                      <Heart 
+                        className={`w-4 h-4 ${
+                          selectedCategory === category 
+                            ? 'text-red-500 fill-red-500' 
+                            : 'text-gray-500'
+                        }`} 
+                      />
                     )}
-                    <span className="font-semibold">{category}</span>
+                    <span>{category}</span>
                     {category === 'Favorites' && favorites.length > 0 && (
                       <span className={`
-                        px-1.5 md:px-2 py-0.5 rounded-full text-xs font-bold
-                        ${selectedCategory === category ? 'bg-white/20' : 'bg-red-100 text-red-600'}
+                        ml-1 px-2 py-0.5 rounded-full text-xs font-bold
+                        ${selectedCategory === category 
+                          ? 'bg-red-500 text-white' 
+                          : 'bg-gray-300 text-gray-700'
+                        }
                       `}>
                         {favorites.length}
                       </span>
@@ -330,9 +331,11 @@ const Products: React.FC<ProductsProps> = ({ searchTerm }) => {
               </div>
             </div>
             
-            {/* Mobile scroll hint */}
-            <div className="text-center mt-2 md:hidden">
-              <p className="text-xs text-gray-400 animate-pulse">← Swipe to explore categories →</p>
+            {/* Category count info */}
+            <div className="text-center mt-3">
+              <p className="text-xs text-gray-500">
+                {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} in {selectedCategory}
+              </p>
             </div>
           </div>
         </div>

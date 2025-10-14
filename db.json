@@ -124,10 +124,10 @@
           "color": "bg-orange-100 text-orange-800"
         }
       ],
-      "inStock": true,
+      "inStock": false,
       "category": "Powders",
       "createdAt": "2025-10-11T00:00:00.000Z",
-      "stockQuantity": 1
+      "stockQuantity": 0
     },
     {
       "id": "4",
@@ -214,7 +214,7 @@
       "inStock": true,
       "category": "Powders",
       "createdAt": "2025-10-11T00:00:00.000Z",
-      "stockQuantity": 3
+      "stockQuantity": 0
     },
     {
       "id": "1760219064226",
@@ -251,7 +251,7 @@
         }
       ],
       "inStock": true,
-      "stockQuantity": 96,
+      "stockQuantity": 0,
       "lowStockThreshold": 10,
       "createdAt": "2025-10-11T21:43:10.062Z"
     }

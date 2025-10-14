@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, DollarSign, Clock, CheckCircle, TrendingUp, Search, Filter, ChevronDown, Eye, Edit2, Trash2, User, Phone, Mail, MapPin, BarChart3, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, Package, DollarSign, Clock, CheckCircle, TrendingUp, Search, Filter, ChevronDown, Eye, Edit2, Trash2, User, Phone, Mail, MapPin, BarChart3, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, ShoppingCart, LineChart, AlertCircle, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import RevenueChart from './RevenueChart';
 import API_URL from '../config/api';
@@ -91,6 +91,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
   const [overdueFilter, setOverdueFilter] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<'id' | 'customerName' | 'createdAt' | 'totalAmount' | 'status'>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [activeView, setActiveView] = useState<'overview' | 'orders' | 'analytics' | 'alerts'>('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
@@ -395,44 +397,179 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
       {/* Overlay */}
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" onClick={onClose} />
 
-      {/* Dashboard Modal */}
-      <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-7xl">
-          <div className="bg-white rounded-2xl shadow-2xl w-full my-8 transform transition-all duration-300 max-h-[95vh] flex flex-col">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-4 rounded-t-2xl flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2.5 rounded-xl backdrop-blur-sm">
-                  <BarChart3 className="w-6 h-6" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Admin Dashboard · Orders & Analytics</h2>
+      {/* Dashboard Container */}
+      <div className="fixed inset-0 z-[101] flex items-center justify-center p-2 md:p-4">
+        <div className="w-full h-full md:h-[95vh] max-w-[1800px] bg-white rounded-none md:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+          
+          {/* Header */}
+          <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white px-4 py-3 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors md:hidden"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg md:text-xl font-bold">Admin Dashboard</h2>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Main Layout: Sidebar + Content */}
+          <div className="flex flex-1 overflow-hidden">
+            
+            {/* Sidebar */}
+            <div className={`
+              ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+              md:translate-x-0 transition-transform duration-300
+              w-64 bg-gray-50 border-r border-gray-200 flex-shrink-0
+              absolute md:relative inset-y-0 left-0 z-20 md:z-auto
+              flex flex-col
+            `}>
+              {/* Mobile overlay */}
+              {sidebarOpen && (
+                <div 
+                  className="md:hidden fixed inset-0 bg-black/20 -z-10"
+                  onClick={() => setSidebarOpen(false)}
+                />
+              )}
+              
+              {/* Menu Items */}
+              <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+                <button
+                  onClick={() => {
+                    setActiveView('overview');
+                    setSidebarOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm
+                    transition-all duration-200
+                    ${activeView === 'overview'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-white hover:shadow-md'
+                    }
+                  `}
+                >
+                  <LayoutDashboard className="w-5 h-5" />
+                  <span>Overview</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveView('orders');
+                    setSidebarOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm
+                    transition-all duration-200
+                    ${activeView === 'orders'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-white hover:shadow-md'
+                    }
+                  `}
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Orders</span>
+                  {stats.totalOrders > 0 && (
+                    <span className={`
+                      ml-auto px-2 py-0.5 rounded-full text-xs font-bold
+                      ${activeView === 'orders' ? 'bg-white/20' : 'bg-gray-200 text-gray-700'}
+                    `}>
+                      {stats.totalOrders}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveView('analytics');
+                    setSidebarOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm
+                    transition-all duration-200
+                    ${activeView === 'analytics'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-white hover:shadow-md'
+                    }
+                  `}
+                >
+                  <LineChart className="w-5 h-5" />
+                  <span>Analytics</span>
+                </button>
+
+                {(stats.pendingOverdue > 0 || stats.processingOverdue > 0 || stats.shippedOverdue > 0) && (
+                  <button
+                    onClick={() => {
+                      setActiveView('alerts');
+                      setSidebarOpen(false);
+                    }}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm
+                      transition-all duration-200
+                      ${activeView === 'alerts'
+                        ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                        : 'text-red-600 bg-red-50 hover:bg-red-100 hover:shadow-md animate-pulse'
+                      }
+                    `}
+                  >
+                    <AlertCircle className="w-5 h-5" />
+                    <span>Alerts</span>
+                    <span className={`
+                      ml-auto px-2 py-0.5 rounded-full text-xs font-bold
+                      ${activeView === 'alerts' ? 'bg-white/20' : 'bg-red-200 text-red-800'}
+                    `}>
+                      {stats.pendingOverdue + stats.processingOverdue + stats.shippedOverdue}
+                    </span>
+                  </button>
+                )}
+              </nav>
+
+              {/* User Info in Sidebar */}
+              <div className="p-3 border-t border-gray-200 bg-white">
+                <div className="flex items-center gap-3 px-3 py-2">
+                  <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">{user?.name?.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+                    <p className="text-xs text-gray-500">Admin</p>
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="p-1.5 hover:bg-white/20 rounded-full transition-colors duration-200"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4">
+            {/* Main Content Area */}
+            <div className="flex-1 overflow-y-auto bg-gray-50">
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-12">
+                <div className="flex flex-col items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mb-4"></div>
                   <p className="text-gray-600">Loading dashboard data...</p>
                 </div>
               ) : (
-                <>
-                  {/* Financial Metrics Section */}
-                  <div className="mb-4">
-                    <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center">
-                      <div className="w-1 h-5 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full mr-2"></div>
-                      Financial Overview
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="p-4 md:p-6">
+                  
+                  {/* Overview View */}
+                  {activeView === 'overview' && (
+                    <div className="space-y-6">
+                      {/* Welcome Header */}
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-1">Welcome back, {user?.name}!</h3>
+                        <p className="text-gray-600">Here's what's happening with your store today.</p>
+                      </div>
+
+                      {/* Quick Stats Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                       {/* Total Revenue */}
                       <button
                         onClick={() => setShowRevenueChart(true)}
@@ -501,30 +638,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                         </div>
                       </div>
 
-                      {/* Net Profit */}
-                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-500 hover:shadow-lg transition-all duration-200 group">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-blue-500 p-2 rounded-lg group-hover:bg-blue-50 transition-colors">
-                            <TrendingUp className="w-5 h-5 text-white group-hover:text-blue-600" />
-                          </div>
-                          <div className="text-left">
-                            <p className="text-xs text-gray-500 font-medium">Net Profit</p>
-                            <p className={`text-sm font-bold ${stats.netProfit >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
+                        {/* Net Profit */}
+                        <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-xl transition-all duration-200 group">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <TrendingUp className="w-6 h-6 text-white" />
+                            </div>
+                            <span className={`text-2xl font-bold ${stats.netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
                               {formatCurrency(stats.netProfit)}
-                            </p>
+                            </span>
                           </div>
+                          <p className="text-sm text-gray-600 font-medium">Net Profit</p>
+                          <p className="text-xs text-gray-500 mt-1">After expenses</p>
+                        </div>
+
+                        {/* Today's Revenue */}
+                        <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-xl transition-all duration-200 group">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <DollarSign className="w-6 h-6 text-white" />
+                            </div>
+                            <span className="text-2xl font-bold text-teal-600">
+                              {formatCurrency(stats.todayRevenue)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 font-medium">Today's Revenue</p>
+                          <p className="text-xs text-gray-500 mt-1">{stats.todayOrders} orders today</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Order Status Metrics Section */}
-                  <div className="mb-4">
-                    <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center">
-                      <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full mr-2"></div>
-                      Order Status Breakdown
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                      {/* Order Status Row */}
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 mb-3">Order Status</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                       {/* Pending Orders */}
                       <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-amber-500 hover:shadow-lg transition-all duration-200 group">
                         <div className="flex items-center gap-3">
@@ -577,81 +723,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                         </div>
                       </div>
 
-                      {/* Cancelled Orders */}
-                      <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-red-500 hover:shadow-lg transition-all duration-200 group">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-red-500 p-2 rounded-lg group-hover:bg-red-50 transition-colors">
-                            <X className="w-5 h-5 text-white group-hover:text-red-600" />
+                        {/* Cancelled Orders */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-red-500 hover:shadow-lg transition-all duration-200 group">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-red-500 p-2 rounded-lg group-hover:bg-red-50 transition-colors">
+                              <X className="w-5 h-5 text-white group-hover:text-red-600" />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-xs text-gray-500 font-medium">Cancelled</p>
+                              <p className="text-sm font-bold text-gray-900">{stats.cancelledOrders}</p>
+                            </div>
                           </div>
-                          <div className="text-left">
-                            <p className="text-xs text-gray-500 font-medium">Cancelled</p>
-                            <p className="text-sm font-bold text-gray-900">{stats.cancelledOrders}</p>
-                          </div>
                         </div>
                       </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Today's Metrics Section */}
-                  <div className="mb-4">
-                    <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center">
-                      <div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full mr-2"></div>
-                      Today's Performance
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {/* Today's Revenue */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-teal-500 hover:shadow-lg transition-all duration-200 group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-teal-500 p-2 rounded-lg group-hover:bg-teal-50 transition-colors">
-                          <DollarSign className="w-5 h-5 text-white group-hover:text-teal-600" />
-                        </div>
-                        <div className="text-left">
-                          <p className="text-xs text-gray-500 font-medium">Today Revenue</p>
-                          <p className="text-sm font-bold text-gray-900">{formatCurrency(stats.todayRevenue)}</p>
-                        </div>
+                  {/* Orders View */}
+                  {activeView === 'orders' && (
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-1">Order Management</h3>
+                        <p className="text-gray-600">View and manage all your orders</p>
                       </div>
-                    </div>
-
-                    {/* Today's Profit */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-purple-500 hover:shadow-lg transition-all duration-200 group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-purple-500 p-2 rounded-lg group-hover:bg-purple-50 transition-colors">
-                          <TrendingUp className="w-5 h-5 text-white group-hover:text-purple-600" />
-                        </div>
-                        <div className="text-left">
-                          <p className="text-xs text-gray-500 font-medium">Today Profit</p>
-                          <p className="text-sm font-bold text-gray-900">{formatCurrency(stats.todayProfit)}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Today's Shipping */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-sky-500 hover:shadow-lg transition-all duration-200 group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-sky-500 p-2 rounded-lg group-hover:bg-sky-50 transition-colors">
-                          <Package className="w-5 h-5 text-white group-hover:text-sky-600" />
-                        </div>
-                        <div className="text-left">
-                          <p className="text-xs text-gray-500 font-medium">Today Shipping</p>
-                          <p className="text-sm font-bold text-gray-900">{formatCurrency(stats.todayShipping)}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Today's Orders */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-pink-500 hover:shadow-lg transition-all duration-200 group">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-pink-500 p-2 rounded-lg group-hover:bg-pink-50 transition-colors">
-                          <Package className="w-5 h-5 text-white group-hover:text-pink-600" />
-                        </div>
-                        <div className="text-left">
-                          <p className="text-xs text-gray-500 font-medium">Today Orders</p>
-                          <p className="text-sm font-bold text-gray-900">{stats.todayOrders}</p>
-                        </div>
-                      </div>
-                    </div>
-                    </div>
-                  </div>
 
                   {/* Actionable Items - Orders Overdue */}
                   {(stats.pendingOverdue > 0 || stats.processingOverdue > 0 || stats.shippedOverdue > 0) && (
@@ -915,7 +1010,202 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                       </div>
                     )}
                   </div>
-                </>
+                    </div>
+                  )}
+
+                  {/* Analytics View */}
+                  {activeView === 'analytics' && (
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-1">Analytics & Insights</h3>
+                        <p className="text-gray-600">Detailed financial metrics and trends</p>
+                      </div>
+
+                      {/* Financial Deep Dive */}
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 mb-3">Financial Overview</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* Total Revenue Card */}
+                          <button
+                            onClick={() => setShowRevenueChart(true)}
+                            className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <DollarSign className="w-10 h-10" />
+                              <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Total</span>
+                            </div>
+                            <p className="text-3xl font-bold mb-1">{formatCurrency(stats.totalRevenue)}</p>
+                            <p className="text-green-100 text-sm">Total Revenue</p>
+                            <p className="text-xs text-green-100/80 mt-2">Click to view chart</p>
+                          </button>
+
+                          {/* Total Profit Card */}
+                          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white shadow-xl">
+                            <div className="flex items-center justify-between mb-4">
+                              <TrendingUp className="w-10 h-10" />
+                              <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Profit</span>
+                            </div>
+                            <p className="text-3xl font-bold mb-1">{formatCurrency(stats.totalProfit)}</p>
+                            <p className="text-blue-100 text-sm">Gross Profit</p>
+                            <p className="text-xs text-blue-100/80 mt-2">Before expenses</p>
+                          </div>
+
+                          {/* Net Profit Card */}
+                          <div className={`bg-gradient-to-br ${stats.netProfit >= 0 ? 'from-purple-500 to-pink-600' : 'from-red-500 to-orange-600'} rounded-xl p-6 text-white shadow-xl`}>
+                            <div className="flex items-center justify-between mb-4">
+                              <TrendingUp className="w-10 h-10" />
+                              <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Net</span>
+                            </div>
+                            <p className="text-3xl font-bold mb-1">{formatCurrency(stats.netProfit)}</p>
+                            <p className="text-white/90 text-sm">Net Profit</p>
+                            <p className="text-xs text-white/70 mt-2">After expenses</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Today vs Total */}
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 mb-3">Today's Performance</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <p className="text-gray-600 text-xs mb-1">Revenue</p>
+                            <p className="text-xl font-bold text-teal-600">{formatCurrency(stats.todayRevenue)}</p>
+                          </div>
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <p className="text-gray-600 text-xs mb-1">Profit</p>
+                            <p className="text-xl font-bold text-purple-600">{formatCurrency(stats.todayProfit)}</p>
+                          </div>
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <p className="text-gray-600 text-xs mb-1">Shipping</p>
+                            <p className="text-xl font-bold text-sky-600">{formatCurrency(stats.todayShipping)}</p>
+                          </div>
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <p className="text-gray-600 text-xs mb-1">Orders</p>
+                            <p className="text-xl font-bold text-orange-600">{stats.todayOrders}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expenses */}
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 mb-3">Expenses</h4>
+                        <div className="bg-white rounded-xl p-6 border-2 border-red-200">
+                          <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                              <DollarSign className="w-8 h-8 text-red-600" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-gray-600 text-sm mb-1">Total Expenses</p>
+                              <p className="text-3xl font-bold text-red-600">{formatCurrency(stats.totalExpenses)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Alerts View */}
+                  {activeView === 'alerts' && (
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                          <AlertCircle className="w-7 h-7 text-red-600" />
+                          Action Required
+                        </h3>
+                        <p className="text-gray-600">Orders that need your immediate attention</p>
+                      </div>
+
+                      {/* Overdue Alerts */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Pending Overdue */}
+                        {stats.pendingOverdue > 0 && (
+                          <button
+                            onClick={() => {
+                              setActiveView('orders');
+                              setOverdueFilter('pending');
+                              setStatusFilter('all');
+                              setSearchTerm('');
+                            }}
+                            className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-left"
+                          >
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <Clock className="w-6 h-6" />
+                              </div>
+                              <span className="text-4xl font-bold">{stats.pendingOverdue}</span>
+                            </div>
+                            <p className="text-lg font-bold mb-1">Pending Too Long</p>
+                            <p className="text-sm text-amber-100">Orders pending over 2 days</p>
+                            <p className="text-xs text-amber-100/80 mt-3">Click to view →</p>
+                          </button>
+                        )}
+
+                        {/* Processing Overdue */}
+                        {stats.processingOverdue > 0 && (
+                          <button
+                            onClick={() => {
+                              setActiveView('orders');
+                              setOverdueFilter('processing');
+                              setStatusFilter('all');
+                              setSearchTerm('');
+                            }}
+                            className="bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-left"
+                          >
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <Package className="w-6 h-6" />
+                              </div>
+                              <span className="text-4xl font-bold">{stats.processingOverdue}</span>
+                            </div>
+                            <p className="text-lg font-bold mb-1">Processing Delayed</p>
+                            <p className="text-sm text-blue-100">Orders processing over 2 days</p>
+                            <p className="text-xs text-blue-100/80 mt-3">Click to view →</p>
+                          </button>
+                        )}
+
+                        {/* Shipped Overdue */}
+                        {stats.shippedOverdue > 0 && (
+                          <button
+                            onClick={() => {
+                              setActiveView('orders');
+                              setOverdueFilter('shipped');
+                              setStatusFilter('all');
+                              setSearchTerm('');
+                            }}
+                            className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-left"
+                          >
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <TrendingUp className="w-6 h-6" />
+                              </div>
+                              <span className="text-4xl font-bold">{stats.shippedOverdue}</span>
+                            </div>
+                            <p className="text-lg font-bold mb-1">Shipping Delayed</p>
+                            <p className="text-sm text-purple-100">Orders shipped over 2 days</p>
+                            <p className="text-xs text-purple-100/80 mt-3">Click to view →</p>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Info box */}
+                      <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <AlertCircle className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-blue-900 mb-1">About Alerts</p>
+                            <p className="text-sm text-blue-800">
+                              These alerts show orders that haven't been updated in over 2 days. 
+                              Click on any alert to view and manage those specific orders.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
               )}
             </div>
           </div>
