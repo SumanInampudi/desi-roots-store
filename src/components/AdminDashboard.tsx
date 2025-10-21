@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, DollarSign, Clock, CheckCircle, TrendingUp, Search, Filter, ChevronDown, Eye, Edit2, Trash2, User, Phone, Mail, MapPin, BarChart3, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, ShoppingCart, LineChart, AlertCircle, Menu } from 'lucide-react';
+import { X, Package, DollarSign, Clock, CheckCircle, TrendingUp, Search, Filter, ChevronDown, Eye, Edit2, Trash2, User, Phone, Mail, MapPin, BarChart3, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, ShoppingCart, LineChart, AlertCircle, Menu, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import RevenueChart from './RevenueChart';
+import UserManagement from './UserManagement';
 import API_URL from '../config/api';
 
 interface AdminDashboardProps {
@@ -91,7 +92,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
   const [overdueFilter, setOverdueFilter] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<'id' | 'customerName' | 'createdAt' | 'totalAmount' | 'status'>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [activeView, setActiveView] = useState<'overview' | 'orders' | 'analytics' | 'alerts'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'orders' | 'analytics' | 'alerts' | 'users'>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Check if user is admin
@@ -506,6 +507,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                 >
                   <LineChart className="w-5 h-5" />
                   <span>Analytics</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveView('users');
+                    setSidebarOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm
+                    transition-all duration-200
+                    ${activeView === 'users'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-white hover:shadow-md'
+                    }
+                  `}
+                >
+                  <Users className="w-5 h-5" />
+                  <span>Users</span>
                 </button>
 
                 {(stats.pendingOverdue > 0 || stats.processingOverdue > 0 || stats.shippedOverdue > 0) && (
@@ -1203,6 +1222,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose }) => {
                         </div>
                       </div>
                     </div>
+                  )}
+
+                  {/* Users View */}
+                  {activeView === 'users' && (
+                    <UserManagement />
                   )}
 
                 </div>

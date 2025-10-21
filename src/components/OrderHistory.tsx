@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, Clock, CheckCircle, XCircle, Truck, RefreshCw, ChevronDown, ChevronUp, MapPin, Calendar, CreditCard, Star, MessageSquare } from 'lucide-react';
+import { X, Package, Clock, CheckCircle, XCircle, Truck, RefreshCw, ChevronDown, ChevronUp, MapPin, Calendar, CreditCard, Star } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import ReviewModal from './ReviewModal';
 import API_URL from '../config/api';
 
 interface OrderHistoryProps {
@@ -44,11 +43,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
   const { addToCart } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const [reorderingId, setReorderingId] = useState<string | null>(null);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [reviewProduct, setReviewProduct] = useState<{ productId: string; productName: string; orderId: string } | null>(null);
-  const [productReviews, setProductReviews] = useState<Record<string, boolean>>({});
+  const [productReviews, setProductReviews] = useState<Record<string, { hasReviewed: boolean; rating: number }>>({});
+  const [hoveredStar, setHoveredStar] = useState<{ key: string; rating: number } | null>(null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -76,23 +73,18 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
 
   const checkReviewedProducts = async (orders: Order[]) => {
     try {
-      // Get all product IDs from all orders
-      const productIds = new Set<string>();
-      orders.forEach(order => {
-        order.items.forEach(item => {
-          productIds.add(`${item.productId}-${order.id}`);
-        });
-      });
-
       // Check reviews for this user
       const reviewResponse = await fetch(`${API_URL}/reviews?userId=${user?.id}`);
       if (reviewResponse.ok) {
         const reviews = await reviewResponse.json();
-        const reviewedMap: Record<string, boolean> = {};
+        const reviewedMap: Record<string, { hasReviewed: boolean; rating: number }> = {};
         
         reviews.forEach((review: any) => {
           const key = `${review.productId}-${review.orderId}`;
-          reviewedMap[key] = true;
+          reviewedMap[key] = {
+            hasReviewed: true,
+            rating: review.rating
+          };
         });
         
         setProductReviews(reviewedMap);
@@ -102,26 +94,38 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleOpenReviewModal = (productId: string, productName: string, orderId: string) => {
-    setReviewProduct({ productId, productName, orderId });
-    setReviewModalOpen(true);
-  };
+  const handleStarClick = async (productId: string, productName: string, orderId: string, rating: number) => {
+    try {
+      const review = {
+        productId,
+        productName,
+        orderId,
+        userId: user?.id,
+        customerName: user?.name || 'Anonymous',
+        rating,
+        comment: '', // No comment, just rating
+        createdAt: new Date().toISOString(),
+      };
 
-  const handleReviewSubmitted = () => {
-    // Refresh the reviewed products status
-    fetchOrders();
-  };
+      const response = await fetch(`${API_URL}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(review),
+      });
 
-  const toggleOrderExpand = (orderId: string) => {
-    setExpandedOrders(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(orderId)) {
-        newSet.delete(orderId);
-      } else {
-        newSet.add(orderId);
+      if (response.ok) {
+        // Update local state
+        const key = `${productId}-${orderId}`;
+        setProductReviews(prev => ({
+          ...prev,
+          [key]: { hasReviewed: true, rating }
+        }));
       }
-      return newSet;
-    });
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
   const handleReorder = async (order: Order) => {
@@ -247,150 +251,106 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {orders.map((order) => {
-                  const isExpanded = expandedOrders.has(order.id);
                   const isReordering = reorderingId === order.id;
+                  const canReview = order.status.toLowerCase() === 'delivered';
 
                   return (
                     <div
                       key={order.id}
-                      className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-200"
+                      className="bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md hover:border-orange-300 transition-all"
                     >
-                      {/* Order Header */}
-                      <div className="p-4 bg-gray-50 border-b border-gray-200">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <span className="text-sm font-medium text-gray-600">Order ID:</span>
-                            <span className="text-sm font-bold text-gray-900 font-mono">#{order.id}</span>
-                          </div>
-                          <div className={`flex items-center space-x-2 px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
-                            {getStatusIcon(order.status)}
-                            <span className="text-sm font-semibold capitalize">{order.status}</span>
-                          </div>
+                      {/* Compact Order Header - Single Line */}
+                      <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className="font-mono font-semibold text-gray-900">#{order.id}</span>
+                          <span className="text-gray-400">•</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                            {order.status}
+                          </span>
+                          <span className="text-gray-400">•</span>
+                          <span className="text-gray-600">{formatDate(order.createdAt)}</span>
                         </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>{formatDate(order.createdAt)}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <CreditCard className="w-4 h-4" />
-                              <span>{order.paymentMethod}</span>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-sm text-gray-600">Total: </span>
-                            <span className="text-lg font-bold text-orange-600">₹{order.totalAmount}</span>
-                          </div>
+                        <div className="text-sm font-bold text-orange-600">
+                          ₹{order.totalAmount}
                         </div>
                       </div>
 
-                      {/* Order Items Summary */}
-                      <div className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="text-sm text-gray-600">
-                            <span className="font-semibold">{order.items.length}</span> item{order.items.length !== 1 ? 's' : ''}
-                          </div>
-                          <button
-                            onClick={() => toggleOrderExpand(order.id)}
-                            className="flex items-center space-x-1 text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors"
-                          >
-                            <span>{isExpanded ? 'Hide Details' : 'View Details'}</span>
-                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                          </button>
-                        </div>
+                      {/* Compact Items List */}
+                      <div className="space-y-1.5 mb-2">
+                        {order.items.map((item, index) => {
+                          const reviewKey = `${item.productId}-${order.id}`;
+                          const reviewData = productReviews[reviewKey];
+                          const userRating = reviewData?.rating || 0;
 
-                        {/* Collapsed View - Show first item */}
-                        {!isExpanded && (
-                          <div className="text-sm text-gray-700">
-                            {order.items[0].quantity}x {order.items[0].productName}
-                            {order.items.length > 1 && <span className="text-gray-500"> and {order.items.length - 1} more...</span>}
-                          </div>
-                        )}
-
-                        {/* Expanded View - Show all details */}
-                        {isExpanded && (
-                          <div className="space-y-4 mt-4">
-                            {/* Items List */}
-                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                              <h4 className="font-semibold text-gray-900 text-sm mb-2">Order Items:</h4>
-                              {order.items.map((item, index) => {
-                                const reviewKey = `${item.productId}-${order.id}`;
-                                const hasReviewed = productReviews[reviewKey];
-                                const canReview = order.status === 'delivered';
-
-                                return (
-                                  <div key={index} className="flex items-center justify-between text-sm">
-                                    <div className="flex-1">
-                                      <span className="font-medium text-gray-900">{item.productName}</span>
-                                      <span className="text-gray-500 ml-2">({item.weight})</span>
-                                    </div>
-                                    <div className="flex items-center space-x-4">
-                                      <span className="text-gray-600">Qty: {item.quantity}</span>
-                                      <span className="font-semibold text-gray-900 min-w-[80px] text-right">
-                                        ₹{parseFloat(item.price) * item.quantity}
-                                      </span>
-                                      {canReview && (
-                                        hasReviewed ? (
-                                          <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
-                                            <CheckCircle className="w-4 h-4" />
-                                            Reviewed
-                                          </span>
-                                        ) : (
-                                          <button
-                                            onClick={() => handleOpenReviewModal(item.productId, item.productName, order.id)}
-                                            className="flex items-center gap-1 px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white text-xs rounded-lg transition-colors"
-                                          >
-                                            <MessageSquare className="w-3 h-3" />
-                                            Review
-                                          </button>
-                                        )
-                                      )}
-                                    </div>
+                          return (
+                            <div key={index} className="flex items-center justify-between text-xs">
+                              {/* Item info - inline */}
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-gray-900 font-medium">{item.quantity}x</span>
+                                <span className="text-gray-700 truncate">{item.productName}</span>
+                                <span className="text-gray-500">({item.weight})</span>
+                              </div>
+                              
+                              {/* Price and inline stars */}
+                              <div className="flex items-center gap-3 ml-2">
+                                <span className="font-semibold text-gray-900">₹{parseFloat(item.price) * item.quantity}</span>
+                                
+                                {/* Inline Star Rating - Only for delivered */}
+                                {canReview && (
+                                  <div className="flex items-center gap-0.5">
+                                    {[1, 2, 3, 4, 5].map((star) => {
+                                      const isHovered = hoveredStar?.key === reviewKey && hoveredStar.rating >= star;
+                                      const isFilled = userRating >= star;
+                                      const isActive = isHovered || isFilled;
+                                      
+                                      return (
+                                        <button
+                                          key={star}
+                                          onClick={() => handleStarClick(item.productId, item.productName, order.id, star)}
+                                          onMouseEnter={() => setHoveredStar({ key: reviewKey, rating: star })}
+                                          onMouseLeave={() => setHoveredStar(null)}
+                                          className="transition-transform hover:scale-125"
+                                          disabled={reviewData?.hasReviewed}
+                                          title={reviewData?.hasReviewed ? `Rated ${userRating} stars` : `Rate ${star} star${star > 1 ? 's' : ''}`}
+                                        >
+                                          <Star 
+                                            className={`w-4 h-4 transition-colors ${
+                                              isActive 
+                                                ? 'text-yellow-500 fill-yellow-500' 
+                                                : 'text-gray-300'
+                                            } ${reviewData?.hasReviewed ? 'cursor-default' : 'cursor-pointer'}`}
+                                          />
+                                        </button>
+                                      );
+                                    })}
                                   </div>
-                                );
-                              })}
-                            </div>
-
-                            {/* Shipping Address */}
-                            <div className="bg-blue-50 rounded-lg p-4">
-                              <h4 className="font-semibold text-gray-900 text-sm mb-2 flex items-center">
-                                <MapPin className="w-4 h-4 mr-2 text-blue-600" />
-                                Shipping Address:
-                              </h4>
-                              <div className="text-sm text-gray-700 space-y-1">
-                                <p>{order.shippingAddress.addressLine1}</p>
-                                {order.shippingAddress.addressLine2 && <p>{order.shippingAddress.addressLine2}</p>}
-                                <p>{order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}</p>
+                                )}
                               </div>
                             </div>
-                          </div>
-                        )}
-
-                        {/* Reorder Button */}
-                        <div className="mt-4 pt-4 border-t border-gray-200">
-                          <button
-                            onClick={() => handleReorder(order)}
-                            disabled={isReordering}
-                            className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 disabled:transform-none"
-                          >
-                            {isReordering ? (
-                              <>
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                <span>Adding to Cart...</span>
-                              </>
-                            ) : (
-                              <>
-                                <RefreshCw className="w-5 h-5" />
-                                <span>Reorder Items</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
+                          );
+                        })}
                       </div>
+
+                      {/* Reorder Button - Bottom */}
+                      <button
+                        onClick={() => handleReorder(order)}
+                        disabled={isReordering}
+                        className="w-full mt-2 py-1.5 text-xs font-semibold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                      >
+                        {isReordering ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                            <span>Adding...</span>
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="w-3 h-3" />
+                            <span>Reorder</span>
+                          </>
+                        )}
+                      </button>
                     </div>
                   );
                 })}
@@ -401,22 +361,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
 
-      {/* Review Modal */}
-      {reviewProduct && (
-        <ReviewModal
-          isOpen={reviewModalOpen}
-          onClose={() => {
-            setReviewModalOpen(false);
-            setReviewProduct(null);
-          }}
-          productId={reviewProduct.productId}
-          productName={reviewProduct.productName}
-          orderId={reviewProduct.orderId}
-          userId={user?.id || ''}
-          customerName={user?.name || ''}
-          onReviewSubmitted={handleReviewSubmitted}
-        />
-      )}
     </>
   );
 };
